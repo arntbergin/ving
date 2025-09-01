@@ -25,8 +25,8 @@ jobs:
         with:
           push: true
           tags: |
-            ghcr.io/ArntBergin/ving:${{ github.sha }}
-            ghcr.io/ArntBergin/ving:latest
+            ghcr.io/arntbergin/ving:${{ github.sha }}
+            ghcr.io/arntbergin/ving:latest
           build-args: |
             PYTHON_VERSION=3.13
 
@@ -51,7 +51,7 @@ jobs:
       - name: Oppdater image i Deployment
         run: |
           kubectl set image deployment/ving-deployment \
-            ving-container=ghcr.io/ArntBergin/ving:${{ github.sha }} \
+            ving-container=ghcr.io/arntbergin/ving:${{ github.sha }} \
             --record
 
       - name: Vent på rollout
