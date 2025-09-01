@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+<div class="d-flex align-items-center justify-content-center vh-100">
+  <div class="card shadow" style="max-width:400px; width:90%; background-color: rgba(255,255,255,0.85); border:none;">
+    <div class="card-body p-4" style="background-color: transparent;">
+      <h2 class="text-center mb-4">Min profil</h2>
+      <p><strong>Brukernavn:</strong> {{ user.username }}</p>
+      <p><strong>E‑post:</strong> {{ user.email }}</p>
+      <div class="text-center mt-4">
+        <a href="{% url 'password_change' %}" class="btn btn-primary">Endre passord</a>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

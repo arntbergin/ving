@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+<div class="d-flex align-items-center justify-content-center vh-100">
+  <div class="card shadow" style="max-width:400px; width:90%; background-color: rgba(255,255,255,0.85); border:none;">
+    <div class="card-body p-4" style="background-color: transparent;">
+      <h2 class="text-center mb-4">Vi har sendt deg en e‑post</h2>
+      <p class="text-center">
+        Sjekk innboksen din og klikk på lenken for å aktivere kontoen.
+      </p>
+      <div class="text-center mt-4">
+        <a href="{% url 'login' %}" class="btn btn-primary">Tilbake til innlogging</a>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

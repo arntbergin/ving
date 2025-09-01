@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+
+{% block title %}Opprett ny bruker{% endblock %}
+
+{% block content %}
+<div class="vh-100 d-flex align-items-center justify-content-center">
+  <div class="card shadow" style="max-width:400px; width:90%; background-color: rgba(255,255,255,0.85); border:none;">
+    <div class="card-body p-4" style="background-color: transparent;">
+      <h2 class="card-title text-center mb-4">Opprett ny bruker</h2>
+      <form method="post">
+        {% csrf_token %}
+        {{ form|crispy }}
+        <button type="submit" class="btn btn-primary w-100 mt-3">Opprett bruker</button>
+      </form>
+      <p class="mt-3 text-center">
+        Har du allerede en konto? <a href="{% url 'login' %}">Logg inn</a>
+      </p>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Nytt prisvarsel</h2>
+
+{% if form.errors %}
+<div class="alert alert-danger">
+    <strong>Feil i skjemaet:</strong>
+    {{ form.errors }}
+</div>
+{% endif %}
+
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="btn btn-primary">Lagre</button>
+</form>
+{% endblock %}

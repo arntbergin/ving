@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+
+{% block title %}Ving-data{% endblock %}
+
+{% block content %}
+
+{# --- Liste over aktive søk med ramme og blurry bakgrunn --- #}
+{% if aktive_søk %}
+<div class="mb-3 søk-boks">
+  <ul class="nav nav-pills flex-wrap gap-2">
+    <li class="nav-item">
+      <a class="nav-link {% if not valgt_id %}active{% endif %}" href=".">Alle</a>
+    </li>
+    {% for s in aktive_søk %}
+      <li class="nav-item">
+        <a class="nav-link {% if valgt_id == s.pk|stringformat:'s' %}active{% endif %}"
+           href="?s={{ s.pk }}"
+           title="{{ s.url }}">
+          {{ s.navn }}
+        </a>
+      </li>
+    {% endfor %}
+  </ul>
+</div>
+{% endif %}
+<div class="container mt-4">
+    <h2 class="mb-4">{{ title }}</h2>
+
+    <table class="table table-striped table-hover">
+      <thead>
+        <tr>
+          {% for col, label in columns %}
+            <th>
+              {% if current_sort == col %}
+                <a href="?sort=-{{ col }}{% if valgt_id %}&s={{ valgt_id }}{% endif %}">{{ label }} ▲</a>
+              {% elif current_sort == '-'|add:col %}
+                <a href="?sort={{ col }}{% if valgt_id %}&s={{ valgt_id }}{% endif %}">{{ label }} ▼</a>
+              {% else %}
+                <a href="?sort={{ col }}{% if valgt_id %}&s={{ valgt_id }}{% endif %}">{{ label }}</a>
+              {% endif %}
+            </th>
+          {% endfor %}
+          <th>Lenke</th>
+          <th>Abonner</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for rad in data %}
+        <tr>
+          <td>{{ rad.avreisested }}</td>
+          <td>{{ rad.destinasjon }}</td>
+          <td>{{ rad.pris }} kr</td>
+          <td>{{ rad.avreise_dato|date:"d.m.Y" }}</td>
+          <td>{{ rad.reiselengde }} dager</td>
+          <td>{{ rad.dato_skrapt|date:"d.m.Y" }}</td>
+          <td><a href="{{ rad.url }}" target="_blank">Se reise</a></td>
+          <td>
+            <form method="post" action="{% url 'nytt_abonnement' %}">
+                {% csrf_token %}
+                <input type="hidden" name="destinasjon" value="{{ rad.destinasjon }}">
+                <input type="hidden" name="reiselengde" value="{{ rad.reiselengde }}">
+                <input type="hidden" name="avreise_dato" value="{{ rad.avreise_dato|date:'Y-m-d' }}">
+                <button type="submit" class="btn btn-sm btn-primary">Abonner</button>
+            </form>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+</div>
+{% endblock %}

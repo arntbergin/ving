@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="d-flex flex-column align-items-center justify-content-start vh-100 text-center">
+    <h1 class="mb-3">Velkommen {{ user.username }}</h1>
+    <p class="mb-4">Her kan du abonnere på tur til Mallorca</p>
+
+    <div class="d-flex justify-content-center gap-3">
+        <a href="{% url 'ving_nåbilde' %}" class="btn btn-primary btn-lg">
+            Se pris av hotellene
+        </a>
+
+
+        <a href="{% url 'mine_abonnement' %}" class="btn btn-primary btn-lg">
+            Mine Varslinger
+        </a>
+
+        <a href="{% url 'ving_liste' %}" class="btn btn-primary btn-lg">
+            Se alle historiske priser
+        </a>
+    </div>
+</div>
+{% endblock %}

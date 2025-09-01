@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Mine prisvarsler</h2>
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th>Destinasjon</th>
+      <th>Lengde</th>
+      <th>Avreise</th>
+      <th>Sist varslet pris</th>
+      <th>Opprettet</th>
+      <th class="text-end">Handling</th>  {# høyrejustert kolonne #}
+    </tr>
+  </thead>
+  <tbody>
+    {% for abo in abonnementer %}
+    <tr>
+      <td>{{ abo.destinasjon }}</td>
+      <td>{{ abo.reiselengde }} dager</td>
+      <td>{{ abo.avreise_dato|date:"d.m.Y" }}</td>
+      <td>{{ abo.sist_varslet_pris|default:"-" }}</td>
+      <td>{{ abo.opprettet|date:"d.m.Y H:i" }}</td>
+      <td class="text-end">
+        <form method="post" action="{% url 'slett_abonnement' abo.id %}" style="display:inline;">
+          {% csrf_token %}
+          <button type="submit" class="btn btn-danger btn-sm">
+            Slett
+          </button>
+        </form>
+      </td>
+    </tr>
+    {% empty %}
+    <tr>
+      <td colspan="6" class="text-center">Du har ingen aktive varsler.</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

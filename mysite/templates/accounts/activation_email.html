@@ -1,0 +1,7 @@
+Hei {{ user.username }},
+
+Klikk på lenken under for å aktivere kontoen din:
+
+http://{{ domain }}{% url 'activate' uidb64=uid token=token %}
+
+Hvis du ikke opprettet en konto hos oss, kan du se bort fra denne e‑posten.

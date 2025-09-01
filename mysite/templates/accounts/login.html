@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+<div class="d-flex align-items-center justify-content-center vh-100">
+  <div class="card shadow" style="max-width:400px; width:90%; background-color: rgba(255,255,255,0.85); border:none;">
+    <div class="card-body p-4" style="background-color: transparent;">
+      <h2 class="text-center mb-4">Logg inn</h2>
+      <form method="post">
+        {% csrf_token %}
+        {{ form|crispy }}
+        <button type="submit" class="btn btn-primary w-100 mt-3">Logg inn</button>
+      </form>
+      <p class="mt-3 text-center">
+        Ny bruker? <a href="{% url 'signup' %}">Lag konto</a>
+      <p class="mt-3 text-center">
+  <a href="{% url 'password_reset' %}">Glemt passord?</a>
+</p>
+
+      </p>
+    </div>
+  </div>
+</div>
+{% endblock %}
