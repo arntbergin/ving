@@ -7,31 +7,30 @@ on:
 
 jobs:
   build-and-deploy:
-    runs-on: self-hosted
+    runs-on: [self-hosted, k3s]
     steps:
       - name: Checkout repo
         uses: actions/checkout@v3
 
-      - name: Log in to GHCR
-        uses: docker/login-action@v2
-        with:
-          registry: ghcr.io
-          username: ${{ secrets.REGISTRY_USER }}
-          password: ${{ secrets.REGISTRY_TOKEN }}
-
-      - name: Build and push Docker image
-        run: |
-          docker build -t ghcr.io/arntbergin/ving:latest .
-          docker push ghcr.io/arntbergin/ving:latest
-
-      - name: Setup kubeconfig
+      - name: Set up Kubeconfig
         run: |
           mkdir -p $HOME/.kube
           echo "${{ secrets.KUBE_CONFIG }}" | base64 --decode > $HOME/.kube/config
-          chmod 600 $HOME/.kube/config
+
+      - name: Build and push image with Kaniko
+        run: |
+          docker run \
+            -v $PWD:/workspace \
+            -v /kaniko/.docker:/kaniko/.docker \
+            gcr.io/kaniko-project/executor:latest \
+            --dockerfile=/workspace/Dockerfile \
+            --context=/workspace \
+            --destination=ghcr.io/arntbergin/ving:latest \
+            --cache=true
+        env:
+          REGISTRY_USER: ${{ secrets.REGISTRY_USER }}
+          REGISTRY_TOKEN: ${{ secrets.REGISTRY_TOKEN }}
 
       - name: Deploy to K3s
-        env:
-          KUBECONFIG: $HOME/.kube/config
         run: |
-          kubectl apply -f k8s/deployment.yaml
+          kubectl apply -f k8s/
