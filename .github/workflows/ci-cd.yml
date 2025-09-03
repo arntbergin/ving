@@ -19,9 +19,11 @@ jobs:
 
       - name: Setup Kubeconfig
         run: |
-          mkdir -p $HOME/.kube
-          echo "${{ secrets.KUBE_CONFIG }}" | base64 -d > $HOME/.kube/config
-          chmod 600 $HOME/.kube/config
+          mkdir -p $RUNNER_TEMP/.kube
+          echo "${{ secrets.KUBE_CONFIG }}" | base64 -d > $RUNNER_TEMP/.kube/config
+        env:
+          KUBECONFIG: $RUNNER_TEMP/.kube/config
+
 
       - name: Authenticate to GHCR
         run: |
