@@ -3,11 +3,11 @@ name: Build & Deploy
 on:
   push:
     branches:
-      - main  # kjør når du pusjer til main
+      - main
 
 jobs:
   build-and-deploy:
-    runs-on: [self-hosted, k3s]
+    runs-on: [self-hosted]   # lar ARC plukke jobben
     steps:
       - name: Sjekk ut repo
         uses: actions/checkout@v3
@@ -18,25 +18,15 @@ jobs:
           registry: ghcr.io
           username: ${{ secrets.REGISTRY_USER }}
           password: ${{ secrets.REGISTRY_TOKEN }}
-  
+
       - name: Bygg Docker-image
-        run: |
-          docker build -t ghcr.io/arntbergin/ving:latest .
+        run: docker build -t ghcr.io/arntbergin/ving:latest .
 
       - name: Push Docker-image
-        run: |
-          docker push ghcr.io/arntbergin/ving:latest
-
-      - name: Set up kubectl
-        uses: azure/setup-kubectl@v3
-        with:
-          version: v1.27.3
+        run: docker push ghcr.io/arntbergin/ving:latest
 
       - name: Deploy til K3s
         run: |
-            echo "$KUBE_CONFIG" | base64 --decode > /tmp/k3s.yaml
-            kubectl --kubeconfig=/tmp/k3s.yaml create namespace cicd || true
-            kubectl --kubeconfig=/tmp/k3s.yaml apply -f deployment.yaml
-            kubectl --kubeconfig=/tmp/k3s.yaml apply -f service.yaml
-        env:
-            KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
+          kubectl create namespace cicd || true
+          kubectl apply -f deployment.yaml
+          kubectl apply -f service.yaml
