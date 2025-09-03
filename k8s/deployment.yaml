@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: ving
-  namespace: cicd
+  namespace: ving
 spec:
   replicas: 1
   selector:
@@ -17,6 +17,6 @@ spec:
       - name: ving
         image: ghcr.io/arntbergin/ving:latest
         ports:
-        - containerPort: 8000
+        - containerPort: 8000   # må samsvare med service.targetPort
       imagePullSecrets:
       - name: ghcr-secret

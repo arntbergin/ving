@@ -2,12 +2,12 @@ apiVersion: v1
 kind: Service
 metadata:
   name: ving-service
-  namespace: cicd 
+  namespace: ving
 spec:
   selector:
     app: ving
   ports:
     - protocol: TCP
-      port: 80
-      targetPort: 80
+      port: 8000
+      targetPort: 8000   # må samsvare med containerPort
   type: LoadBalancer
