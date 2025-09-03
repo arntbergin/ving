@@ -1,0 +1,13 @@
+name: Test self-hosted runner
+
+on:
+  workflow_dispatch:   # gjør at du kan starte den manuelt fra GitHub
+
+jobs:
+  test:
+    runs-on: self-hosted   # matcher runneren din
+    steps:
+      - name: Skriv en melding
+        run: echo "Hei fra self-hosted runner i k3s!"
+      - name: Sjekk noder i klyngen
+        run: kubectl get nodes -o wide
