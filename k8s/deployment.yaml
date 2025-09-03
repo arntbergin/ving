@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ving-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ving
+  template:
+    metadata:
+      labels:
+        app: ving
+    spec:
+      containers:
+      - name: ving
+        image: ghcr.io/arntbergin/ving:latest
+        ports:
+        - containerPort: 80
