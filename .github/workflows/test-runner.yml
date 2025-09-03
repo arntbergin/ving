@@ -1,23 +1,35 @@
-name: Test self-hosted runner
+name: Test Helm i K3s
 
 on:
   workflow_dispatch:
 
 jobs:
-  test:
+  helm-test:
     runs-on: self-hosted
+
     steps:
-      - name: Installer curl og CA-sertifikater
+      - name: Sjekk om Helm er installert
         run: |
-          apt-get update
-          apt-get install -y curl ca-certificates
-      - name: Last ned kubectl (fast versjon)
+          if ! command -v helm &> /dev/null; then
+            echo "Helm ikke funnet – installerer..."
+            curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
+          else
+            echo "Helm er allerede installert."
+          fi
+
+      - name: Vis Helm-versjon
+        run: helm version
+
+      - name: Opprett testchart
         run: |
-          KUBECTL_VERSION=v1.30.4
-          curl -LO "https://dl.k8s.io/release/${KUBECTL_VERSION}/bin/linux/amd64/kubectl"
-          chmod +x kubectl
-          mv kubectl /usr/local/bin/
-      - name: Sjekk kubectl-versjon
-        run: kubectl version --client
-      - name: Sjekk noder i klyngen
-        run: kubectl get nodes -o wide
+          helm create testchart
+          ls testchart
+
+      - name: Lint chart
+        run: helm lint testchart
+
+      - name: Dry-run installasjon
+        run: helm install test-release testchart --dry-run --debug
+
+      - name: Liste Helm releases
+        run: helm list --all-namespaces
