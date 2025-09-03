@@ -1,35 +1,25 @@
-name: Test Helm i K3s
+name: Test Self-Hosted Runner
 
 on:
-  workflow_dispatch:
+  workflow_dispatch: # kjør manuelt fra GitHub
 
 jobs:
-  helm-test:
+  test-runner:
     runs-on: self-hosted
-
     steps:
-      - name: Sjekk om Helm er installert
+      - name: Sjekk runner
+        run: echo "Runneren fungerer! 🚀"
+
+      - name: Hent repo kode
+        uses: actions/checkout@v4
+
+      - name: Sjekk kubeconfig
         run: |
-          if ! command -v helm &> /dev/null; then
-            echo "Helm ikke funnet – installerer..."
-            curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
-          else
-            echo "Helm er allerede installert."
-          fi
+          kubectl config current-context
+          kubectl get nodes -o wide
 
-      - name: Vis Helm-versjon
-        run: helm version
-
-      - name: Opprett testchart
+      - name: Deploy test nginx
         run: |
-          helm create testchart
-          ls testchart
-
-      - name: Lint chart
-        run: helm lint testchart
-
-      - name: Dry-run installasjon
-        run: helm install test-release testchart --dry-run --debug
-
-      - name: Liste Helm releases
-        run: helm list --all-namespaces
+          kubectl create deployment test-nginx --image=nginx || echo "Deployment finnes allerede"
+          kubectl rollout status deployment/test-nginx
+          kubectl get pods -l app=test-nginx -o wide
