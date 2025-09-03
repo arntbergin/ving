@@ -1,8 +1,15 @@
+name: K3s Deploy
+
+on:
+  push:
+    branches:
+      - main
+
 jobs:
   deploy:
-    runs-on: self-hosted  # eller ubuntu-latest hvis du bruker hosted runner
+    runs-on: self-hosted 
     steps:
-      - name: Checkout code
+      - name: Checkout repository
         uses: actions/checkout@v3
 
       - name: Setup kubeconfig
@@ -13,5 +20,10 @@ jobs:
         env:
           KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
 
-      - name: Test kubectl
+      - name: Test kubectl connectivity
         run: kubectl get nodes
+
+      - name: Apply Kubernetes manifests
+        run: |
+          kubectl apply -f k8s/  # Bytt ut med path til dine YAML-filer
+          kubectl get all -o wide
