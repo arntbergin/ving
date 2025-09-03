@@ -1,14 +1,10 @@
 name: Test Runner
 
 on:
-  workflow_dispatch:   # lar deg trigge manuelt fra GitHub
+  workflow_dispatch:
 
 jobs:
   test-runner:
-    runs-on: [self-hosted, linux]   # matcher labels på dine ephemeral runners
+    runs-on: [self-hosted, linux]
     steps:
-      - name: Sjekk ut repo
-        uses: actions/checkout@v3
-
-      - name: Echo test
-        run: echo "Runner fungerer! 🚀"
+      - run: echo "Runner fungerer! 🚀"
