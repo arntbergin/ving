@@ -34,7 +34,7 @@ jobs:
 
       - name: Deploy til K3s
         run: |
-            printf "%s" "$KUBE_CONFIG" > /tmp/k3s.yaml
+            echo "$KUBE_CONFIG" | base64 --decode > /tmp/k3s.yaml
             kubectl --kubeconfig=/tmp/k3s.yaml create namespace cicd || true
             kubectl --kubeconfig=/tmp/k3s.yaml apply -f deployment.yaml
             kubectl --kubeconfig=/tmp/k3s.yaml apply -f service.yaml
