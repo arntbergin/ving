@@ -1,11 +1,17 @@
-name: Test K3s Access
-
-on:
-  workflow_dispatch:
-
 jobs:
-  test:
-    runs-on: self-hosted
+  deploy:
+    runs-on: self-hosted  # eller ubuntu-latest hvis du bruker hosted runner
     steps:
-      - name: Test kubeconfig direkte
-        run: kubectl --kubeconfig=/etc/rancher/k3s/k3s.yaml get nodes -o wide
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup kubeconfig
+        run: |
+          mkdir -p ~/.kube
+          echo "$KUBE_CONFIG" | base64 --decode > ~/.kube/config
+          chmod 600 ~/.kube/config
+        env:
+          KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
+
+      - name: Test kubectl
+        run: kubectl get nodes
