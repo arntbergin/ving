@@ -7,7 +7,7 @@ on:
 
 jobs:
   build-and-deploy:
-    runs-on: [self-hosted]   # lar ARC plukke jobben basert på repo/organization
+    runs-on: [self-hosted, linux] 
     steps:
       # 1️⃣ Sjekk ut koden
       - name: Checkout repository
