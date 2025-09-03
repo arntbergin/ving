@@ -33,8 +33,11 @@ jobs:
           version: v1.27.3  # eller hvilken som helst du bruker
 
       - name: Deploy til K3s
-        env:
-          KUBECONFIG: ${{ secrets.KUBE_CONFIG }}
         run: |
-          kubectl apply -f deployment.yaml
-          kubectl apply -f service.yaml
+            echo "${KUBE_CONFIG}" > /tmp/k3s.yaml
+            export KUBECONFIG=/tmp/k3s.yaml
+            kubectl create namespace cicd || true
+            kubectl apply -f deployment.yaml
+            kubectl apply -f service.yaml
+        env:
+            KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
