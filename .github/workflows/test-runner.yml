@@ -7,9 +7,14 @@ jobs:
   test:
     runs-on: self-hosted
     steps:
-      - name: Installer kubectl
+      - name: Installer curl og CA-sertifikater
         run: |
-          curl -LO "https://dl.k8s.io/release/$(curl -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+          apt-get update
+          apt-get install -y curl ca-certificates
+      - name: Last ned kubectl (fast versjon)
+        run: |
+          KUBECTL_VERSION=v1.30.4
+          curl -LO "https://dl.k8s.io/release/${KUBECTL_VERSION}/bin/linux/amd64/kubectl"
           chmod +x kubectl
           mv kubectl /usr/local/bin/
       - name: Sjekk kubectl-versjon
