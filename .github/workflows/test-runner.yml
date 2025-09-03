@@ -6,6 +6,8 @@ on:
 jobs:
   test-runner:
     runs-on: self-hosted
+    env:
+      KUBECONFIG: /etc/rancher/k3s/k3s.yaml   # <-- sett globalt for alle steg
     steps:
       - name: Sjekk runner
         run: echo "Runneren fungerer! 🚀"
@@ -14,15 +16,11 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Sjekk kubeconfig
-        env:
-          KUBECONFIG: /etc/rancher/k3s/k3s.yaml
         run: |
           kubectl config current-context
           kubectl get nodes -o wide
 
       - name: Deploy test nginx
-        env:
-          KUBECONFIG: /etc/rancher/k3s/k3s.yaml
         run: |
           kubectl create deployment test-nginx --image=nginx || echo "Deployment finnes allerede"
           kubectl rollout status deployment/test-nginx
