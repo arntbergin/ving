@@ -1,4 +1,4 @@
-name: CI/CD
+name: CI Test
 
 on:
   push:
@@ -6,45 +6,14 @@ on:
       - main
 
 jobs:
-  build-and-deploy:
-    runs-on: [self-hosted, linux, k3s]
-
-    env:
-      IMAGE_NAME: ghcr.io/arntbergin/ving:latest
-      KUBE_NAMESPACE: cicd
-
+  build:
+    runs-on: ving-runners
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
+      - name: Checkout repo
+        uses: actions/checkout@v4
 
-      - name: Setup Kubeconfig
+      - name: Print runner info
         run: |
-          mkdir -p $RUNNER_TEMP/.kube
-          echo "${{ secrets.KUBE_CONFIG }}" | base64 -d > $RUNNER_TEMP/.kube/config
-        env:
-          KUBECONFIG: $RUNNER_TEMP/.kube/config
-
-
-      - name: Authenticate to GHCR
-        run: |
-          echo "${{ secrets.REGISTRY_TOKEN }}" > /tmp/token.txt
-          export DOCKER_CONFIG=/tmp
-          mkdir -p $DOCKER_CONFIG
-          echo "{\"auths\":{\"ghcr.io\":{\"username\":\"${{ secrets.REGISTRY_USER }}\",\"password\":\"${{ secrets.REGISTRY_TOKEN }}\"}}}" > $DOCKER_CONFIG/config.json
-
-      - name: Build and push with Kaniko
-        run: |
-          kubectl run kaniko \
-            --rm -i --tty \
-            --image=gcr.io/kaniko-project/executor:latest \
-            --restart=Never \
-            -- \
-            --dockerfile=Dockerfile \
-            --context=dir://$(pwd) \
-            --destination=${IMAGE_NAME} \
-            --skip-tls-verify \
-            --cache=true
-
-      - name: Deploy to K3s
-        run: |
-          kubectl apply -f k8s/ -n $KUBE_NAMESPACE
+          echo "Kjører på GitHub Runner Scale Set!"
+          uname -a
+          kubectl version --client || echo "kubectl ikke installert"
