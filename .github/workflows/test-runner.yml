@@ -1,4 +1,4 @@
-name: K3s Deploy
+name: K3s Deploy (Read-Only Safe)
 
 on:
   push:
@@ -7,23 +7,24 @@ on:
 
 jobs:
   deploy:
-    runs-on: self-hosted 
+    runs-on: self-hosted  # eller ubuntu-latest hvis du bruker hosted runner
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Setup kubeconfig
+      - name: Setup kubeconfig in writable temp folder
         run: |
-          mkdir -p ~/.kube
-          echo "$KUBE_CONFIG" | base64 --decode > ~/.kube/config
-          chmod 600 ~/.kube/config
+          KUBE_DIR="$RUNNER_TEMP/.kube"
+          mkdir -p "$KUBE_DIR"
+          echo "$KUBE_CONFIG" | base64 --decode > "$KUBE_DIR/config"
+          chmod 600 "$KUBE_DIR/config"
+          export KUBECONFIG="$KUBE_DIR/config"
+          echo "KUBECONFIG=$KUBECONFIG" >> $GITHUB_ENV
+          kubectl get nodes
         env:
           KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
 
-      - name: Test kubectl connectivity
-        run: kubectl get nodes
-
       - name: Apply Kubernetes manifests
         run: |
-          kubectl apply -f k8s/  # Bytt ut med path til dine YAML-filer
+          kubectl apply -f k8s/   # Bytt ut med path til dine YAML-filer
           kubectl get all -o wide
