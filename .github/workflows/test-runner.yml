@@ -5,6 +5,6 @@ on:
 
 jobs:
   test-runner:
-    runs-on: [self-hosted, linux]
+    runs-on: [self-hosted, linux, ving-runners]
     steps:
       - run: echo "Runner fungerer! 🚀"
