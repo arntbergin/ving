@@ -1,7 +1,7 @@
 name: Test self-hosted runner
 
 on:
-  workflow_dispatch:   # lar deg starte manuelt fra GitHub
+  workflow_dispatch:
 
 jobs:
   test:
