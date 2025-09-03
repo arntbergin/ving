@@ -1,0 +1,40 @@
+name: Build & Deploy
+
+on:
+  push:
+    branches:
+      - main  # kjør når du pusjer til main
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Sjekk ut repo
+        uses: actions/checkout@v3
+
+      - name: Logg inn på GHCR
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ secrets.REGISTRY_USER }}
+          password: ${{ secrets.REGISTRY_TOKEN }}
+  
+      - name: Bygg Docker-image
+        run: |
+          docker build -t ghcr.io/arntbergin/ving:latest .
+
+      - name: Push Docker-image
+        run: |
+          docker push ghcr.io/arntbergin/ving:latest
+
+      - name: Set up kubectl
+        uses: azure/setup-kubectl@v3
+        with:
+          version: v1.27.3  # eller hvilken som helst du bruker
+
+      - name: Deploy til K3s
+        env:
+          KUBECONFIG: ${{ secrets.KUBE_CONFIG }}
+        run: |
+          kubectl apply -f deployment.yaml
+          kubectl apply -f service.yaml
