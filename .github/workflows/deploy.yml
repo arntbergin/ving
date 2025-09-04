@@ -25,6 +25,6 @@ jobs:
       - name: Build Docker image
         run: docker build -t ghcr.io/arntbergin/ving:latest .
 
-      # 4️⃣ Push Docker-image til GHCR
+      # 4️⃣ Push Docker-image til GHCR 
       - name: Push Docker image
         run: docker push ghcr.io/arntbergin/ving:latest
