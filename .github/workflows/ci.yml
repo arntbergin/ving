@@ -4,4 +4,4 @@ jobs:
   test:
     runs-on: [self-hosted, linux, arc-runners]
     steps:
-      - run: echo "✅ Runner plukket opp jobben!"
+      - run: echo "✅ Runner plukket opp jobben!!"
