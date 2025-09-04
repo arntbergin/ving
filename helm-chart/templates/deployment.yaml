@@ -5,7 +5,7 @@ metadata:
   labels:
     app: {{ include "ving.name" . }}
 spec:
-  replicas: 1
+  replicas: {{ .Values.replicaCount | default 1 }}
   selector:
     matchLabels:
       app: {{ include "ving.name" . }}
@@ -19,9 +19,23 @@ spec:
       containers:
         - name: {{ include "ving.name" . }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
-          imagePullPolicy: IfNotPresent
+          imagePullPolicy: {{ .Values.image.pullPolicy | default "IfNotPresent" }}
           ports:
             - containerPort: 8000
-          envFrom:
-            - secretRef:
-                name: django-secrets
+          env:
+            - name: SECRET_KEY
+              value: {{ .Values.env.SECRET_KEY | quote }}
+            - name: DB_NAME
+              value: {{ .Values.env.DB_NAME | quote }}
+            - name: DB_USER
+              value: {{ .Values.env.DB_USER | quote }}
+            - name: DB_PASSWORD
+              value: {{ .Values.env.DB_PASSWORD | quote }}
+            - name: DB_HOST
+              value: {{ .Values.env.DB_HOST | quote }}
+            - name: DB_PORT
+              value: {{ .Values.env.DB_PORT | quote }}
+            - name: EMAILHOST_USER
+              value: {{ .Values.env.EMAILHOST_USER | quote }}
+            - name: EMAIL_HOST_PASSWORD
+              value: {{ .Values.env.EMAIL_HOST_PASSWORD | quote }}
