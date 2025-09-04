@@ -24,7 +24,9 @@ FROM python:3.13-slim-bookworm AS run
 WORKDIR /app
 ENV PATH="/app/.venv/bin:${PATH}"
 
+# Kopier både kode og venv eksplisitt
 COPY --from=builder /app /app
+COPY --from=builder /app/.venv /app/.venv
 
 EXPOSE 8000
 
