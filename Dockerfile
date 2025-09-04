@@ -17,11 +17,11 @@ FROM python:3.13-slim-bookworm AS run
 
 WORKDIR /app
 
-# Kopier over både prosjekt og venv
 COPY --from=builder /app /app
 
-# Bruk virtuell miljø binærmappe
 ENV PATH="/app/.venv/bin:${PATH}"
 
 EXPOSE 8000
-CMD ["python", "mysite/manage.py", "runserver", "0.0.0.0:8000"]
+
+# Start Gunicorn med Django WSGI-app
+CMD ["gunicorn", "mysite.wsgi:application", "--bind", "0.0.0.0:8000", "--workers", "3"]

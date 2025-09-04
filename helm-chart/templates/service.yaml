@@ -3,9 +3,9 @@ kind: Service
 metadata:
   name: {{ include "ving.fullname" . }}
 spec:
-  type: {{ .Values.service.type }}
+  type: LoadBalancer
   selector:
     app: {{ include "ving.name" . }}
   ports:
-    - port: {{ .Values.service.port }}
+    - port: 8000
       targetPort: 8000

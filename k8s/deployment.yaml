@@ -1,22 +1,27 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: ving
-  namespace: ving
+  name: {{ include "ving.fullname" . }}
+  labels:
+    app: {{ include "ving.name" . }}
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: ving
+      app: {{ include "ving.name" . }}
   template:
     metadata:
       labels:
-        app: ving
+        app: {{ include "ving.name" . }}
     spec:
-      containers:
-      - name: ving
-        image: ghcr.io/arntbergin/ving:latest
-        ports:
-        - containerPort: 8000   # må samsvare med service.targetPort
       imagePullSecrets:
-      - name: ghcr-secret
+        {{- toYaml .Values.imagePullSecrets | nindent 8 }}
+      containers:
+        - name: {{ include "ving.name" . }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8000
+          envFrom:
+            - secretRef:
+                name: django-secrets
