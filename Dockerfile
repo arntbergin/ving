@@ -11,7 +11,7 @@ RUN --mount=type=cache,target=/root/.cache/uv \
     uv sync --frozen --no-dev && \
     uv pip install gunicorn
 
-
+RUN gunicorn --version
 # Kopier resten av prosjektet
 COPY . .
 
