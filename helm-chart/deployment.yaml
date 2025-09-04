@@ -5,7 +5,7 @@ metadata:
   labels:
     app: {{ include "ving.name" . }}
 spec:
-  replicas: {{ .Values.replicaCount }}
+  replicas: {{ .Values.replicaCount | default 1 }}
   selector:
     matchLabels:
       app: {{ include "ving.name" . }}
@@ -19,9 +19,9 @@ spec:
       containers:
         - name: {{ include "ving.name" . }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
-          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          imagePullPolicy: {{ .Values.image.pullPolicy | default "IfNotPresent" }}
           ports:
-            - containerPort: 80
+            - containerPort: 8000
           env:
             - name: SECRET_KEY
               valueFrom:
