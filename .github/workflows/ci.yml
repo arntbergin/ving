@@ -1,14 +1,7 @@
-name: Test ARC Runners
-on: [push]
-
+name: Test ARC
+on: [workflow_dispatch]
 jobs:
-  build:
-    runs-on: actions-runner-controller # This tells GitHub to use your self-hosted runners. Use the NAMESPACE name you defined in step 3.
+  test:
+    runs-on: [self-hosted, linux, arc-runner-set]
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-
-      - name: Run a script
-        run: echo "Hello from ARC Runner!"
-      - name: List files
-        run: ls -la
+      - run: echo "✅ Runner plukket opp jobben!"
