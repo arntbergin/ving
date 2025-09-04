@@ -1,23 +1,23 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "helm-chart.fullname" . }}
+  name: {{ include "ving.fullname" . }}
   labels:
-    app: {{ include "helm-chart.name" . }}
+    app: {{ include "ving.name" . }}
 spec:
   replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
-      app: {{ include "helm-chart.name" . }}
+      app: {{ include "ving.name" . }}
   template:
     metadata:
       labels:
-        app: {{ include "helm-chart.name" . }}
+        app: {{ include "ving.name" . }}
     spec:
       imagePullSecrets:
         {{- toYaml .Values.imagePullSecrets | nindent 8 }}
       containers:
-        - name: {{ include "helm-chart.name" . }}
+        - name: {{ include "ving.name" . }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:

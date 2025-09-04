@@ -1,11 +1,11 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ include "helm-chart.fullname" . }}
+  name: {{ include "ving.fullname" . }}
 spec:
   type: {{ .Values.service.type }}
   selector:
-    app: {{ include "helm-chart.name" . }}
+    app: {{ include "ving.name" . }}
   ports:
     - port: {{ .Values.service.port }}
       targetPort: 8000
