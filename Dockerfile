@@ -23,7 +23,7 @@ FROM python:3.13-slim-bookworm AS run
 
 WORKDIR /app
 ENV PATH="/app/.venv/bin:${PATH}"
-ENV PYTHONPATH=/app   # Sørger for at `import ving` fungerer
+ENV PYTHONPATH=/app
 
 # Kopier både kode og venv eksplisitt
 COPY --from=builder /app /app
