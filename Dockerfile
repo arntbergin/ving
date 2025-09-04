@@ -23,6 +23,7 @@ FROM python:3.13-slim-bookworm AS run
 
 WORKDIR /app
 ENV PATH="/app/.venv/bin:${PATH}"
+ENV PYTHONPATH=/app   # Sørger for at `import ving` fungerer
 
 # Kopier både kode og venv eksplisitt
 COPY --from=builder /app /app
@@ -30,8 +31,5 @@ COPY --from=builder /app/.venv /app/.venv
 
 EXPOSE 8000
 
-#CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
-
-# Start Gunicorn med Django WSGI-app
+# Start Gunicorn med riktig WSGI-app
 CMD ["gunicorn", "ving.wsgi:application", "--bind", "0.0.0.0:8000", "--workers", "3"]
-
