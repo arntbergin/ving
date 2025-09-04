@@ -9,7 +9,8 @@ COPY pyproject.toml uv.lock ./
 # Installer alle dependencies + gunicorn
 RUN --mount=type=cache,target=/root/.cache/uv \
     uv sync --frozen --no-dev && \
-    /app/.venv/bin/pip install gunicorn
+    uv pip install gunicorn
+
 
 # Kopier resten av prosjektet
 COPY . .
