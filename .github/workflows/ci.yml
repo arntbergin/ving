@@ -2,6 +2,6 @@ name: Test ARC
 on: [workflow_dispatch]
 jobs:
   test:
-    runs-on: [self-hosted, linux, arc-runner-set]
+    runs-on: [self-hosted, linux, arc-runners]
     steps:
       - run: echo "✅ Runner plukket opp jobben!"
