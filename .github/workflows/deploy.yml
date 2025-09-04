@@ -47,12 +47,3 @@ jobs:
         run: |
           sed -i "s|tag:.*|tag: ${TAG}|" helm-chart/values.yaml
           cat helm-chart/values.yaml
-
-      # 7️⃣ Deploy til k3s med Helm
-      - name: Deploy with Helm
-        run: |
-          helm upgrade --install ving ./helm-chart \
-            --namespace ving \
-            --set image.repository=ghcr.io/${OWNER_LC}/${REPO_NAME} \
-            --set image.tag=${TAG} \
-            --set image.pullPolicy=Always

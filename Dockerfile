@@ -6,8 +6,10 @@ WORKDIR /app
 # Kopier kun låsefilene først for cache
 COPY pyproject.toml uv.lock ./
 
+# Installer alle dependencies + gunicorn
 RUN --mount=type=cache,target=/root/.cache/uv \
-    uv sync --frozen --no-dev
+    uv sync --frozen --no-dev && \
+    /app/.venv/bin/pip install gunicorn
 
 # Kopier resten av prosjektet
 COPY . .
