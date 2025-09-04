@@ -1,0 +1,14 @@
+name: Test ARC Runners
+on: [push]
+
+jobs:
+  build:
+    runs-on: arc-runners # This tells GitHub to use your self-hosted runners. Use the NAMESPACE name you defined in step 3.
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Run a script
+        run: echo "Hello from ARC Runner!"
+      - name: List files
+        run: ls -la
