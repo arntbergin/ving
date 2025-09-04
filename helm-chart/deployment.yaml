@@ -21,4 +21,39 @@ spec:
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
-            - containerPort: 8000
+            - containerPort: 80
+          env:
+            - name: SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: django-secrets
+                  key: SECRET_KEY
+            - name: DB_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: django-secrets
+                  key: DB_NAME
+            - name: DB_USER
+              valueFrom:
+                secretKeyRef:
+                  name: django-secrets
+                  key: DB_USER
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: django-secrets
+                  key: DB_PASSWORD
+            - name: DB_HOST
+              value: {{ .Values.env.DB_HOST | quote }}
+            - name: DB_PORT
+              value: {{ .Values.env.DB_PORT | quote }}
+            - name: EMAILHOST_USER
+              valueFrom:
+                secretKeyRef:
+                  name: django-secrets
+                  key: EMAILHOST_USER
+            - name: EMAIL_HOST_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: django-secrets
+                  key: EMAIL_HOST_PASSWORD

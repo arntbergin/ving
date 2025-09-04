@@ -5,8 +5,21 @@ image:
   tag: latest
   pullPolicy: IfNotPresent
 
+imagePullSecrets:
+  - name: ghcr-cred
+
 service:
   type: ClusterIP
   port: 8000
+
+env:
+  SECRET_KEY: "sett-i-secret"
+  DB_NAME: "vingdb"
+  DB_USER: "vinguser"
+  DB_PASSWORD: "sett-i-secret"
+  DB_HOST: "postgres"
+  DB_PORT: "5432"
+  EMAILHOST_USER: "sett-i-secret"
+  EMAIL_HOST_PASSWORD: "sett-i-secret"
 
 resources: {}
