@@ -1,4 +1,4 @@
-name: Build & Deploy
+name: Build & Push
 
 on:
   push:
@@ -6,8 +6,8 @@ on:
       - main
 
 jobs:
-  build-and-deploy:
-    runs-on: [self-hosted, linux] 
+  build-and-push:
+    runs-on: [self-hosted, linux]
     steps:
       # 1️⃣ Sjekk ut koden
       - name: Checkout repository
@@ -28,18 +28,3 @@ jobs:
       # 4️⃣ Push Docker-image til GHCR
       - name: Push Docker image
         run: docker push ghcr.io/arntbergin/ving:latest
-
-      # 5️⃣ Deploy til K3s
-      - name: Deploy to K3s
-        run: |
-          # Lag namespace hvis det ikke finnes
-          kubectl create namespace cicd || true
-          # Apply deployment og service
-          kubectl apply -f deployment.yaml
-          kubectl apply -f service.yaml
-
-      # 6️⃣ Sjekk at deployment ble opprettet
-      - name: Verify Deployment
-        run: |
-          kubectl get deploy -n cicd
-          kubectl get svc -n cicd
