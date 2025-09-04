@@ -21,7 +21,7 @@ jobs:
           username: ${{ secrets.REGISTRY_USER }}
           password: ${{ secrets.REGISTRY_TOKEN }}
 
-      # 3️⃣ Bygg Docker-image
+      # 3️⃣ Bygg Docker-image 
       - name: Build Docker image
         run: docker build -t ghcr.io/arntbergin/ving:latest .
 
