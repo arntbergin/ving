@@ -1,5 +1,5 @@
 apiVersion: v2
-name: Ving
+name: ving
 description: Helm chart for deploying the Ving app from GHCR
 type: application
 version: 0.1.0
