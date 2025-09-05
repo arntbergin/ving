@@ -2,7 +2,7 @@ from django.db import models
 from django.conf import settings
 
 class VingURL(models.Model):
-    navn = models.CharField(max_length=200, help_text="Beskrivende navn, f.eks. 'Mallorca 8 dager'")
+    navn = models.CharField(max_length=500, help_text="Beskrivende navn, f.eks. 'Mallorca 8 dager'")
     url = models.URLField()
     aktiv = models.BooleanField(default=True, help_text="Brukes i scraping hvis aktivert")
 
@@ -12,8 +12,8 @@ class VingURL(models.Model):
         return self.navn
 
 class VingData(models.Model):
-    avreisested = models.CharField(max_length=255)
-    destinasjon = models.CharField(max_length=255)
+    avreisested = models.CharField(max_length=500)
+    destinasjon = models.CharField(max_length=500)
     pris = models.IntegerField()
     url = models.URLField(max_length=500)
     avreise_dato = models.DateField()  # midlertidig tillat null
@@ -25,7 +25,7 @@ class VingData(models.Model):
     
 class PrisAbonnement(models.Model):
     bruker = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    destinasjon = models.CharField(max_length=200)
+    destinasjon = models.CharField(max_length=500)
     reiselengde = models.IntegerField()
     avreise_dato = models.DateField()
     sist_varslet_pris = models.IntegerField(null=True, blank=True)
