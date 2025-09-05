@@ -21,5 +21,7 @@ env:
   DB_PORT: "5432"
   EMAIL_HOST_USER: "sett-i-secret"
   EMAIL_HOST_PASSWORD: "sett-i-secret"
+  ALLOWED_HOSTS: "url.domain.com,ip"
+  CSRF_TRUSTED_ORIGINS: "http://url.com"
 
 resources: {}
