@@ -19,7 +19,7 @@ env:
   DB_PASSWORD: "sett-i-secret"
   DB_HOST: "postgres"
   DB_PORT: "5432"
-  EMAILHOST_USER: "sett-i-secret"
+  EMAIL_HOST_USER: "sett-i-secret"
   EMAIL_HOST_PASSWORD: "sett-i-secret"
 
 resources: {}

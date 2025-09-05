@@ -36,6 +36,6 @@ spec:
             - name: DB_PORT
               value: {{ .Values.env.DB_PORT | quote }}
             - name: EMAILHOST_USER
-              value: {{ .Values.env.EMAILHOST_USER | quote }}
+              value: {{ .Values.env.EMAIL_HOST_USER | quote }}
             - name: EMAIL_HOST_PASSWORD
               value: {{ .Values.env.EMAIL_HOST_PASSWORD | quote }}
