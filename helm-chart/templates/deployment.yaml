@@ -39,3 +39,7 @@ spec:
               value: {{ .Values.env.EMAIL_HOST_USER | quote }}
             - name: EMAIL_HOST_PASSWORD
               value: {{ .Values.env.EMAIL_HOST_PASSWORD | quote }}
+            - name: CSRF_TRUSTED_ORIGINS
+              value: {{ .Values.env.CSRF_TRUSTED_ORIGINS | quote }}
+            - name: ALLOWED_HOSTS
+              value: {{ .Values.env.ALLOWED_HOSTS | quote }}
