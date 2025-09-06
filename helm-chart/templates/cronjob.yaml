@@ -16,6 +16,8 @@ spec:
               imagePullPolicy: IfNotPresent
               command: ["python", "mysite/manage.py", "hent_ving_data"]
               env:
+                - name: SECRET_KEY
+                  value: {{ .Values.env.SECRET_KEY | quote }}
                 - name: DB_NAME
                   value: {{ .Values.env.DB_NAME | quote }}
                 - name: DB_USER
