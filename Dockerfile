@@ -10,8 +10,7 @@ COPY pyproject.toml uv.lock ./
 # Installer dependencies + gunicorn + playwright
 RUN --mount=type=cache,target=/root/.cache/uv \
     uv sync --frozen --no-dev && \
-    uv pip install gunicorn playwright && \
-    playwright install --with-deps
+    uv pip install gunicorn playwright
 
 # Bekreft at gunicorn finnes
 RUN gunicorn --version
