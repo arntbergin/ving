@@ -15,7 +15,19 @@ spec:
               image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
               imagePullPolicy: IfNotPresent
               command: ["python", "manage.py", "hent_ving_data"]
-              envFrom:
-                - secretRef:
-                    name: {{ include "ving.fullname" . }}-env
+              env:
+                - name: DB_NAME
+                  value: {{ .Values.env.DB_NAME | quote }}
+                - name: DB_USER
+                  value: {{ .Values.env.DB_USER | quote }}
+                - name: DB_PASSWORD
+                  value: {{ .Values.env.DB_PASSWORD | quote }}
+                - name: DB_HOST
+                  value: {{ .Values.env.DB_HOST | quote }}
+                - name: DB_PORT
+                  value: {{ .Values.env.DB_PORT | quote }}
+                - name: EMAIL_HOST_USER
+                  value: {{ .Values.env.EMAIL_HOST_USER | quote }}
+                - name: EMAIL_HOST_PASSWORD
+                  value: {{ .Values.env.EMAIL_HOST_PASSWORD | quote }}
           restartPolicy: OnFailure
