@@ -32,7 +32,7 @@ jobs:
       - name: Check if cronjob files changed
         id: croncheck
         run: |
-          CHANGED=$(git diff-tree --no-commit-id --name-only -r ${{ github.sha }} | grep -E 'Dockerfile.cron|source/mysite/main/management/commands/' || true)
+          CHANGED=$(git diff-tree --no-commit-id --name-only -r ${{ github.sha }} | grep -E 'Dockerfile.cron|source/mysite/main/management/commands/|helm-chart/templates/cronjob.yaml' || true)
           if [ -n "$CHANGED" ]; then
             echo "changed=true" >> $GITHUB_OUTPUT
           else
