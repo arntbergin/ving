@@ -1,0 +1,15 @@
+FROM python:3.13-slim-bookworm
+
+WORKDIR /app
+
+# Installer systempakker for Playwright
+RUN apt-get update && apt-get install -y curl gnupg libnss3 libatk1.0-0 libatk-bridge2.0-0 libcups2 libxcomposite1 libxrandr2 libxss1 libasound2 libxdamage1 libxext6 libxfixes3 libx11-xcb1 libxcb1 libx11-6 libxrender1 libdbus-glib-1-2 libgtk-3-0 libdrm2 libgbm1 libxshmfence1
+
+# Kopier prosjektet
+COPY . /app
+
+# Installer avhengigheter
+RUN pip install uv && uv pip install . && playwright install --with-deps
+
+# Kjør cronjobben
+CMD ["python", "mysite/manage.py", "hent_ving_data"]
