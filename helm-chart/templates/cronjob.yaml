@@ -15,7 +15,11 @@ spec:
             - name: hent-data
               image: "{{ .Values.cronjob.image.repository }}:{{ .Values.cronjob.image.tag }}"
               imagePullPolicy: IfNotPresent
-              command: ["python", "mysite/manage.py", "hent_ving_data"]
+              command: ["/bin/sh", "-c"]
+              args:
+                - |
+                  python mysite/manage.py hent_ving_data &&
+                  python mysite/manage.py sjekk_abonnementer
               env:
                 - name: SECRET_KEY
                   value: {{ .Values.env.SECRET_KEY | quote }}
