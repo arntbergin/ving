@@ -3,7 +3,7 @@ kind: CronJob
 metadata:
   name: {{ include "ving.fullname" . }}-hent-data
   labels:
-    {{- include "ving.labels" . | nindent 4 }}
+    app.kubernetes.io/name: {{ include "ving.fullname" . }}
 spec:
   schedule: "0 20 * * *"  # Kjør hver dag kl. 20:00
   jobTemplate:
