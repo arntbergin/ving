@@ -37,6 +37,7 @@ jobs:
             echo "changed=true" >> $GITHUB_OUTPUT
           else
             echo "changed=false" >> $GITHUB_OUTPUT
+          fi
 
       # 5️⃣ Bygg webserver-image
       - name: Build webserver image
