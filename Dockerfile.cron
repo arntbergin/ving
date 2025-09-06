@@ -12,7 +12,7 @@ RUN apt-get update && apt-get install -y \
 
 COPY . /app
 
-# Installer uv og dependencies direkte i systemet!
+# Installer uv og dependencies direkte i systemet!!
 RUN pip install uv && uv pip install --system . && playwright install --with-deps
 
 CMD ["python", "source/mysite/manage.py", "hent_ving_data"]
