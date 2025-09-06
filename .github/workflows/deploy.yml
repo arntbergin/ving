@@ -28,7 +28,17 @@ jobs:
           echo "REPO_NAME=${GITHUB_REPOSITORY#*/}" >> $GITHUB_ENV
           echo "TAG=${GITHUB_SHA::7}" >> $GITHUB_ENV
 
-      # 4️⃣ Bygg webserver-image
+      # 4️⃣ Sjekk om cronjob-relaterte filer er endret
+      - name: Check if cronjob files changed
+        id: croncheck
+        run: |
+          CHANGED=$(git diff-tree --no-commit-id --name-only -r ${{ github.sha }} | grep -E 'Dockerfile.cron|source/mysite/main/management/commands/')
+          if [ -n "$CHANGED" ]; then
+            echo "changed=true" >> $GITHUB_OUTPUT
+          else
+            echo "changed=false" >> $GITHUB_OUTPUT
+
+      # 5️⃣ Bygg webserver-image
       - name: Build webserver image
         run: |
           docker build \
@@ -37,8 +47,9 @@ jobs:
             -t ghcr.io/${OWNER_LC}/${REPO_NAME}:latest \
             .
 
-      # 4️⃣b Bygg cronjob-image
+      # 5️⃣b Bygg cronjob-image (kun hvis endret)
       - name: Build cronjob image
+        if: steps.croncheck.outputs.changed == 'true'
         run: |
           docker build \
             -f Dockerfile.cron \
@@ -46,28 +57,30 @@ jobs:
             -t ghcr.io/${OWNER_LC}/${REPO_NAME}-cron:latest \
             .
 
-      # 5️⃣ Push webserver image
+      # 6️⃣ Push webserver image
       - name: Push webserver image
         run: |
           docker push ghcr.io/${OWNER_LC}/${REPO_NAME}:${TAG}
           docker push ghcr.io/${OWNER_LC}/${REPO_NAME}:latest
 
-      # 5️⃣b Push cronjob image
+      # 6️⃣b Push cronjob image (kun hvis endret)
       - name: Push cronjob image
+        if: steps.croncheck.outputs.changed == 'true'
         run: |
           docker push ghcr.io/${OWNER_LC}/${REPO_NAME}-cron:${TAG}
           docker push ghcr.io/${OWNER_LC}/${REPO_NAME}-cron:latest
 
-      # 6️⃣ Oppdater values.yaml med ny tag for webserver
+      # 7️⃣ Oppdater values.yaml med ny tag for webserver
       - name: Update values.yaml (web)
         run: |
           sed -i "s|tag:.*|tag: ${TAG}|" helm-chart/values.yaml
 
-      # 6️⃣b Oppdater values.yaml med ny tag for cronjob
+      # 7️⃣b Oppdater values.yaml med ny tag for cronjob (kun hvis endret)
       - name: Update values.yaml (cronjob)
+        if: steps.croncheck.outputs.changed == 'true'
         run: |
           sed -i "s|cronjob:[[:space:]]*[^:]*:[[:space:]]*.*|cronjob:\n  image:\n    repository: ghcr.io/${OWNER_LC}/${REPO_NAME}-cron\n    tag: ${TAG}|" helm-chart/values.yaml
 
-      # 7️⃣ Vis oppdatert values.yaml
+      # 8️⃣ Vis oppdatert values.yaml
       - name: Show updated values.yaml
         run: cat helm-chart/values.yaml
