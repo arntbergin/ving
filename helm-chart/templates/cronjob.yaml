@@ -14,7 +14,7 @@ spec:
             - name: hent-data
               image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
               imagePullPolicy: IfNotPresent
-              command: ["python", "manage.py", "hent_ving_data"]
+              command: ["python", "mysite/manage.py", "hent_ving_data"]
               env:
                 - name: DB_NAME
                   value: {{ .Values.env.DB_NAME | quote }}
