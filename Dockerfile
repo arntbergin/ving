@@ -33,6 +33,7 @@ RUN apt-get update && apt-get install -y \
     libxshmfence1
 
 # Installer Playwright og last ned browser-binaries
+RUN pip install uv
 RUN uv pip install playwright && playwright install --with-deps
 # Kopier både kode og venv eksplisitt
 COPY --from=builder /app /app
