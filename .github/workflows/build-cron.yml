@@ -2,13 +2,15 @@ name: Build & Push Cronjob
 
 on:
   push:
-    branches:
-      - main
+    branches: [main]
     paths:
       - Dockerfile.cron
       - helm-chart/templates/cronjob.yaml
       - source/mysite/main/management/commands/**
       - main/utils.py
+  workflow_dispatch:
+  release:
+    types: [published]
 
 jobs:
   build-cron:
@@ -29,14 +31,17 @@ jobs:
           echo "OWNER_LC=${GITHUB_REPOSITORY_OWNER,,}" >> $GITHUB_ENV
           echo "REPO_NAME=${GITHUB_REPOSITORY#*/}" >> $GITHUB_ENV
           echo "TAG=${GITHUB_SHA::7}" >> $GITHUB_ENV
+          echo "RELEASE_TAG=${GITHUB_REF_NAME}" >> $GITHUB_ENV
 
       - name: Build cronjob image
         run: |
           docker build -f Dockerfile.cron \
             -t ghcr.io/${OWNER_LC}/${REPO_NAME}-cron:${TAG} \
-            -t ghcr.io/${OWNER_LC}/${REPO_NAME}-cron:latest .
+            -t ghcr.io/${OWNER_LC}/${REPO_NAME}-cron:latest \
+            -t ghcr.io/${OWNER_LC}/${REPO_NAME}-cron:${RELEASE_TAG} .
 
       - name: Push cronjob image
         run: |
           docker push ghcr.io/${OWNER_LC}/${REPO_NAME}-cron:${TAG}
           docker push ghcr.io/${OWNER_LC}/${REPO_NAME}-cron:latest
+          docker push ghcr.io/${OWNER_LC}/${REPO_NAME}-cron:${RELEASE_TAG}

@@ -2,8 +2,10 @@ name: Build & Push Web
 
 on:
   push:
-    branches:
-      - main
+    branches: [main]
+  workflow_dispatch:
+  release:
+    types: [published]
 
 jobs:
   build-web:
@@ -24,14 +26,17 @@ jobs:
           echo "OWNER_LC=${GITHUB_REPOSITORY_OWNER,,}" >> $GITHUB_ENV
           echo "REPO_NAME=${GITHUB_REPOSITORY#*/}" >> $GITHUB_ENV
           echo "TAG=${GITHUB_SHA::7}" >> $GITHUB_ENV
+          echo "RELEASE_TAG=${GITHUB_REF_NAME}" >> $GITHUB_ENV
 
       - name: Build webserver image
         run: |
           docker build -f Dockerfile \
             -t ghcr.io/${OWNER_LC}/${REPO_NAME}:${TAG} \
-            -t ghcr.io/${OWNER_LC}/${REPO_NAME}:latest .
+            -t ghcr.io/${OWNER_LC}/${REPO_NAME}:latest \
+            -t ghcr.io/${OWNER_LC}/${REPO_NAME}:${RELEASE_TAG} .
 
       - name: Push webserver image
         run: |
           docker push ghcr.io/${OWNER_LC}/${REPO_NAME}:${TAG}
           docker push ghcr.io/${OWNER_LC}/${REPO_NAME}:latest
+          docker push ghcr.io/${OWNER_LC}/${REPO_NAME}:${RELEASE_TAG}
