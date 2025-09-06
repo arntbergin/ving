@@ -1,6 +1,8 @@
 # main/utils.py
 from .models import PrisAbonnement, VingData, VingURL
 from django.core.mail import send_mail
+from decouple import config
+
 
 
 def hent_urls_for_scraping():
@@ -39,6 +41,6 @@ def send_varsel(bruker, vingdata):
             f"fra {vingdata.avreisested} {vingdata.avreise_dato}.\n"
             f"Lenke: {vingdata.url}"
         ),
-        from_email="arntbergin@gmail.com",
+        from_email=str(config("EMAIL_HOST_USER")),
         recipient_list=[bruker.email],
     )

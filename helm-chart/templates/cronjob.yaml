@@ -1,0 +1,21 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: {{ include "ving.fullname" . }}-hent-data
+  labels:
+    {{- include "ving.labels" . | nindent 4 }}
+spec:
+  schedule: "0 20 * * *"  # Kjør hver dag kl. 20:00
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+            - name: hent-data
+              image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+              imagePullPolicy: IfNotPresent
+              command: ["python", "manage.py", "hent_ving_data"]
+              envFrom:
+                - secretRef:
+                    name: {{ include "ving.fullname" . }}-env
+          restartPolicy: OnFailure
