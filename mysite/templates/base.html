@@ -95,7 +95,7 @@
 
     /* Dark variant av søk-boks (semi-transparent mørk “glass”) */
     body.dark-mode .søk-boks {
-      background-color: rgba(0, 0, 0, 0.45);
+      background-color: rgba(229, 220, 220, 0);
       border: 1px solid rgba(255, 255, 255, 0.22);
       box-shadow: 0 4px 16px rgba(0,0,0,0.35);
       color: #e0e0e0;
@@ -141,7 +141,7 @@
         <a href="{% url 'admin:index' %}" class="btn btn-outline-light btn-sm">Admin</a>
       {% endif %}
     {% else %}
-      <a href="{% url 'login' %}" class="btn btn-light btn-sm">Logg inn</a>
+      <a href="{% url 'login' %}" class="btn btn-outline-light btn-sm">Logg inn</a>
       <a href="{% url 'signup' %}" class="btn btn-outline-light btn-sm">Lag bruker</a>
     {% endif %}
   </div>
