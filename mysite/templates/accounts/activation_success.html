@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-5 text-center">
+  <div class="card shadow-sm p-4">
+    <h2 class>Kontoen er aktivert!</h2>
+    <a href="{% url 'login' %}" class="btn btn-primary mt-3">Gå til innlogging</a>
+  </div>
+</div>
+{% endblock %}

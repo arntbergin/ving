@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-5 text-center">
+  <div class="card shadow-sm p-4">
+    <h2 class>Ugyldig eller utløpt lenke</h2>
+    <p>Vennligst prøv å registrere deg på nytt</p>
+    <a href="{% url 'signup' %}" class="btn btn-secondary mt-3">Registrer deg på nytt</a>
+  </div>
+</div>
+{% endblock %}

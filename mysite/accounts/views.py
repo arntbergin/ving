@@ -61,9 +61,9 @@ def activate(request, uidb64, token):
     if user is not None and default_token_generator.check_token(user, token):
         user.is_active = True
         user.save()
-        return HttpResponse('Kontoen din er aktivert! Du kan nå logge inn.')
+        return render(request, 'accounts/activation_success.html', {'user': user})
     else:
-        return HttpResponse('Aktiveringslenken er ugyldig eller utløpt.')
+        return render(request, 'accounts/activation_failed.html', {'user': user})
     
 
 @login_required
