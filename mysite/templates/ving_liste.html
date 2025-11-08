@@ -5,16 +5,16 @@
 {% block content %}
 
     <div class="d-flex justify-content-center gap-3">
-        <a href="{% url 'ving_aktiv' %}" class="btn btn-primary btn-lg">
+        <a href="{% url 'ving_aktiv' %}" class="btn btn-secondary btn-lg">
             Se pris av reisene
         </a>
 
 
-        <a href="{% url 'mine_abonnement' %}" class="btn btn-primary btn-lg">
+        <a href="{% url 'mine_abonnement' %}" class="btn btn-secondary btn-lg">
             Mine abonnement
         </a>
 
-        <a href="{% url 'ving_historikk' %}" class="btn btn-primary btn-lg">
+        <a href="{% url 'ving_historikk' %}" class="btn btn-secondary btn-lg">
             Se alle historiske priser
         </a>
     </div>
@@ -78,9 +78,9 @@
         <input type="hidden" name="avreise_dato" value="{{ rad.obj.avreise_dato|date:'Y-m-d' }}">
 
         {% if rad.har_abonnement %}
-          <button type="submit" class="btn btn-sm btn-success" disabled>Allerede abonnert</button>
+          <button type="submit" class="btn btn-sm btn-secondary" disabled>Allerede abonnert</button>
         {% else %}
-          <button type="submit" class="btn btn-sm btn-primary">Abonner</button>
+          <button type="submit" class="btn btn-sm btn-secondary">Abonner</button>
         {% endif %}
       </form>
     </td>
