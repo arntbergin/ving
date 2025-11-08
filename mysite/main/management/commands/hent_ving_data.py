@@ -40,7 +40,7 @@ class Command(BaseCommand):
 
         today = date.today()
         async with async_playwright() as pw:
-            browser = await pw.chromium.launch(headless=False)
+            browser = await pw.chromium.launch(headless=True)
 
             for url in urls:
                 self.stdout.write(f"\n▶ Starter skraping for: {url}")
