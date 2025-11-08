@@ -20,30 +20,38 @@ def home(request: HttpRequest) -> HttpResponse:
     return render(request, 'main/home.html')
 
 @login_required
-def ving_nåbilde(request):
-    # Hent alle aktive søk til topp-listen
+def ving_aktiv(request):
     aktive_søk = VingURL.objects.filter(aktiv=True).order_by(Lower('navn'))
-
-    # Hent valgt søk fra query-param (?s=<id>)
     valgt_id = request.GET.get('s')
 
-    # Finn siste scraping-dato
     siste_dato = VingData.objects.order_by('-dato_skrapt').values_list('dato_skrapt', flat=True).first()
     if not siste_dato:
         messages.warning(request, "Ingen reiser funnet.")
         return redirect('ving_liste')
 
-    # Start med alle rader fra siste scraping
     data = VingData.objects.filter(dato_skrapt=siste_dato)
-
-    # Hvis et søk er valgt, filtrer på det
     if valgt_id:
         valgt_url = aktive_søk.filter(pk=valgt_id).values_list('url', flat=True).first()
         if valgt_url:
             data = data.filter(url=valgt_url)
 
-    # Sorter etter pris
     data = data.order_by('pris')
+
+    # Hent brukerens abonnement og lag et sett med nøkler
+    abonnementer = PrisAbonnement.objects.filter(bruker=request.user)
+    aktive = set(
+        (a.destinasjon.strip().lower(), int(a.reiselengde), a.avreise_dato)
+        for a in abonnementer
+    )
+
+    # Bygg en liste med flagg
+    data_list = []
+    for r in data:
+        key = (r.destinasjon.strip().lower(), int(r.reiselengde), r.avreise_dato)
+        data_list.append({
+            "obj": r,
+            "har_abonnement": key in aktive
+        })
 
     columns = [
         ('avreisested', 'Avreisested'),
@@ -55,7 +63,7 @@ def ving_nåbilde(request):
     ]
 
     return render(request, 'ving_liste.html', {
-        'data': data,
+        'data': data_list,
         'current_sort': None,
         'columns': columns,
         'title': 'Ving',
@@ -65,7 +73,7 @@ def ving_nåbilde(request):
 
 
 @login_required
-def ving_liste(request):
+def ving_historikk(request):
     # Definer kolonner som (felt, visningsnavn)
     columns = [
         ('avreisested', 'Avreisested'),
@@ -88,14 +96,12 @@ def ving_liste(request):
 
     data = VingData.objects.all().order_by(sort)
 
-    return render(request, 'ving_liste.html', {
+    return render(request, 'ving_historikk.html', {
+        'title': 'Ving - Prishistorikk',
         'data': data,
         'current_sort': sort,
         'columns': columns,
-        'title': 'Ving - Prishistorikk'
     })
-
-
 
 
 @login_required

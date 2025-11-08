@@ -40,7 +40,7 @@ class Command(BaseCommand):
 
         today = date.today()
         async with async_playwright() as pw:
-            browser = await pw.chromium.launch(headless=True)
+            browser = await pw.chromium.launch(headless=False)
 
             for url in urls:
                 self.stdout.write(f"\n▶ Starter skraping for: {url}")
@@ -71,7 +71,7 @@ class Command(BaseCommand):
                 # Vent på hotellkort
                 try:
                     await page.wait_for_selector(
-                        "div[class*='hotelHitContentHeader']",
+                        "div[class*='PriceSummarystyle__Price-sc-1u0b5nv-3 cABoUJ']",
                         timeout=15000
                     )
                 except:
@@ -80,10 +80,10 @@ class Command(BaseCommand):
                     continue
 
                 names  = await page.query_selector_all(
-                    "h3[class*='hotelHitContentHeader__HotelHitContentTitle']"
+                    "div[class*='Titlestyle__Title-sc-lor2nk-0 hDPKDj']"
                 )
                 prices = await page.query_selector_all(
-                    "div[class*='hotelHitContentPrice__CurrentPrice']"
+                    "div[class*='PriceSummarystyle__Price-sc-1u0b5nv-3 cABoUJ']"
                 )
                 total = min(len(names), len(prices))
                 self.stdout.write(

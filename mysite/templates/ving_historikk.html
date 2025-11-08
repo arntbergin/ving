@@ -57,35 +57,22 @@
             </th>
           {% endfor %}
           <th>Lenke</th>
-          <th>Abonner</th>
+
         </tr>
       </thead>
       <tbody>
-  {% for rad in data %}
+{% for rad in data %}
   <tr>
-    <td>{{ rad.obj.avreisested }}</td>
-    <td>{{ rad.obj.destinasjon }}</td>
-    <td>{{ rad.obj.pris }} kr</td>
-    <td>{{ rad.obj.avreise_dato|date:"d.m.Y" }}</td>
-    <td>{{ rad.obj.reiselengde }} dager</td>
-    <td>{{ rad.obj.dato_skrapt|date:"d.m.Y" }}</td>
-    <td><a href="{{ rad.obj.url }}" target="_blank">Se reise</a></td>
-    <td>
-      <form method="post" action="{% url 'nytt_abonnement' %}">
-        {% csrf_token %}
-        <input type="hidden" name="destinasjon" value="{{ rad.obj.destinasjon }}">
-        <input type="hidden" name="reiselengde" value="{{ rad.obj.reiselengde }}">
-        <input type="hidden" name="avreise_dato" value="{{ rad.obj.avreise_dato|date:'Y-m-d' }}">
-
-        {% if rad.har_abonnement %}
-          <button type="submit" class="btn btn-sm btn-success" disabled>Allerede abonnert</button>
-        {% else %}
-          <button type="submit" class="btn btn-sm btn-primary">Abonner</button>
-        {% endif %}
-      </form>
-    </td>
+    <td>{{ rad.avreisested }}</td>
+    <td>{{ rad.destinasjon }}</td>
+    <td>{{ rad.pris }} kr</td>
+    <td>{{ rad.avreise_dato|date:"d.m.Y" }}</td>
+    <td>{{ rad.reiselengde }} dager</td>
+    <td>{{ rad.dato_skrapt|date:"d.m.Y" }}</td>
+    <td><a href="{{ rad.url }}" target="_blank">Se reise</a></td>
   </tr>
-  {% endfor %}
+{% endfor %}
+
 </tbody>
 
 
