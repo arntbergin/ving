@@ -9,9 +9,12 @@
             Se pris av reisene
         </a>
 
-
         <a href="{% url 'mine_abonnement' %}" class="btn btn-secondary btn-lg">
             Mine abonnement
+        </a>
+        
+        <a href="{% url 'personlig_sok' %}" class="btn btn-secondary btn-lg">
+            Personlig søk
         </a>
 
         <a href="{% url 'ving_historikk' %}" class="btn btn-secondary btn-lg">
@@ -20,25 +23,33 @@
     </div>
 </div>
 {# --- Liste over aktive søk med ramme og blurry bakgrunn --- #}
-{% if aktive_søk %}
+{% if aktive_sok %}
 <h2 class="mb-3">Aktive søk</h2>
 <div class="mb-3 søk-boks">
-  <ul class="nav nav-pills flex-wrap gap-2">
+<ul class="nav nav-pills flex-wrap gap-2">
+  <li class="nav-item">
+    <a class="nav-link {% if not valgt_id and not kategori %}active{% endif %}" href=".">Alle</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link {% if kategori == 'felles' and not valgt_id %}active{% endif %}" href="?k=felles">Fellessøk</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link {% if kategori == 'personlig' and not valgt_id %}active{% endif %}" href="?k=personlig">Personlige søk⭐</a>
+  </li>
+  {% for sok_id, sok, er_personlig in aktive_sok %}
     <li class="nav-item">
-      <a class="nav-link {% if not valgt_id %}active{% endif %}" href=".">Alle</a>
+      <a class="nav-link {% if valgt_id == sok_id %}active{% endif %}"
+         href="?s={{ sok_id }}"
+         title="{{ sok.url }}">
+        {{ sok.navn }}{% if er_personlig %} ⭐{% endif %}
+      </a>
     </li>
-    {% for s in aktive_søk %}
-      <li class="nav-item">
-        <a class="nav-link {% if valgt_id == s.pk|stringformat:'s' %}active{% endif %}"
-           href="?s={{ s.pk }}"
-           title="{{ s.url }}">
-          {{ s.navn }}
-        </a>
-      </li>
-    {% endfor %}
-  </ul>
+  {% endfor %}
+</ul>
 </div>
 {% endif %}
+
+
 <div class="container mt-4">
     <h4 class="mb-4">Trykk abonner for å aktivere epost-varsel ved prisfall</h4>
 

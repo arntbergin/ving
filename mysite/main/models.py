@@ -1,6 +1,7 @@
 from django.db import models
 from django.conf import settings
 
+
 class VingURL(models.Model):
     navn = models.CharField(max_length=500, help_text="Beskrivende navn, f.eks. 'Mallorca 8 dager'")
     url = models.URLField()
@@ -35,3 +36,8 @@ class PrisAbonnement(models.Model):
         return f"{self.bruker} → {self.destinasjon} ({self.reiselengde} dager fra {self.avreise_dato})"
     
 
+class PersonligURL(models.Model):
+    bruker = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    navn = models.CharField(max_length=100)
+    url = models.URLField(max_length=500)
+    lagt_til = models.DateTimeField(auto_now_add=True)

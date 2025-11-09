@@ -9,9 +9,12 @@
             Se pris av reisene
         </a>
 
-
         <a href="{% url 'mine_abonnement' %}" class="btn btn-secondary btn-lg">
             Mine abonnement
+        </a>
+        
+        <a href="{% url 'personlig_sok' %}" class="btn btn-secondary btn-lg">
+            Personlig søk
         </a>
 
         <a href="{% url 'ving_historikk' %}" class="btn btn-secondary btn-lg">
@@ -40,7 +43,7 @@
 </div>
 {% endif %}
 <div class="container mt-4">
-    <h4 class="mb-4">Trykk abonner for å aktivere epost-varsel ved prisfall</h4>
+    <h4 class="mb-4">Alle historiske priser</h4>
 
     <table class="table table-striped table-hover">
       <thead>

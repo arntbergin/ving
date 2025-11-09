@@ -2,13 +2,14 @@
 from .models import PrisAbonnement, VingData, VingURL
 from django.core.mail import send_mail
 from decouple import config
-
+from .models import VingURL, PersonligURL
 
 
 def hent_urls_for_scraping():
-    return list(
-        VingURL.objects.filter(aktiv=True).values_list('url', flat=True)
-    )
+    felles = list(VingURL.objects.filter(aktiv=True).values_list('url', flat=True))
+    personlige = list(PersonligURL.objects.values_list('url', flat=True))
+    return felles + personlige
+    
 
 def sjekk_abonnementer():
     for abo in PrisAbonnement.objects.all():

@@ -10,5 +10,7 @@ urlpatterns = [
     path('abonnement/slett/<int:abo_id>/', views.slett_abonnement, name='slett_abonnement'),
     path('admin/run-sjekk/', views.trigge_sjekk_abonnementer, name='trigge_sjekk_abonnementer'),
     path('ving/aktiv/', views.ving_aktiv, name='ving_aktiv'),
+    path('personlig_sok/', views.personlig_sok, name='personlig_sok'),
+    path('personlig_sok/slett/<int:url_id>/', views.slett_personlig_url, name='slett_personlig_url'),   
 
 ]

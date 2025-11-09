@@ -46,6 +46,7 @@ class Command(BaseCommand):
                 self.stdout.write(f"\n▶ Starter skraping for: {url}")
                 page = await browser.new_page()
                 await page.goto(url)
+                
 
                 params = parse_url_params(url)
 

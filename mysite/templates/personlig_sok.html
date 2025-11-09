@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <div class="d-flex justify-content-center gap-3">
+        <a href="{% url 'ving_aktiv' %}" class="btn btn-secondary btn-lg">
+            Se pris av reisene
+        </a>
+
+        <a href="{% url 'mine_abonnement' %}" class="btn btn-secondary btn-lg">
+            Mine abonnement
+        </a>
+        
+        <a href="{% url 'personlig_sok' %}" class="btn btn-secondary btn-lg">
+            Personlig søk
+        </a>
+
+        <a href="{% url 'ving_historikk' %}" class="btn btn-secondary btn-lg">
+            Se alle historiske priser
+        </a>
+    </div>
+</div>
+<div class="container mt-4">
+<h2 class="mb-3">
+    Legg til personlig søk
+    <a href="https://www.ving.no/bestill-reise?CategoryId=2&QueryAreaID=0&QueryCtryID=4328&QueryDepDate=20260428&QueryDepID=12672&QueryDur=8&QueryResID=4345&QueryRoomAges=%7C42&QueryUnits=1&experiments=test%3Ab%2Cuniversalhotelcard%3Aold%2Cnamecollectionpopup%3Aold%2Ccharterflowhotelcard%3Aabovefold&firstDisplayed=-1&nrOfHotels=10&selectedTransport=flight%7CCgJWThIkMjljNzMyZDItMTAzYi00MDc1LWJiOTctYjVkYjk2OWZjYmVi" 
+    class="btn btn-secondary" target="_blank">
+        Eksempel
+    </a>
+</h2>
+<form method="post" class="mb-4">
+    {% csrf_token %}
+    <div class="mb-3">
+        <input type="text" name="navn" class="form-control" placeholder="Navn på søket" required>
+    </div>
+    <div class="mb-3">
+        <input type="url" name="url" class="form-control" placeholder="Lim inn URL her" required>
+    </div>
+    <button type="submit" class="btn btn-secondary">Lagre</button>
+</form>
+
+<h3>Dine lagrede URL-er</h3>
+{% if mine_urler %}
+    <ul class="list-group">
+        {% for item in mine_urler %}
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                <div>
+                    <strong>{{ item.navn }}</strong><br>
+                    <small class="text-muted">Lagt til {{ item.lagt_til|date:"d.m.Y H:i" }}</small>
+                </div>
+                <form method="post" action="{% url 'slett_personlig_url' item.id %}">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-sm btn-outline-danger">Slett</button>
+                </form>
+            </li>
+        {% endfor %}
+    </ul>
+{% else %}
+    <div class="alert alert-info mt-3">Ingen URL-er lagret ennå.</div>
+{% endif %}
+
+</div>
+{% endblock %}
