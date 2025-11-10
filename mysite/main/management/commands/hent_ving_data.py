@@ -36,6 +36,7 @@ def parse_url_params(url: str) -> dict:
 
 async def scrape_urls(urls, stdout=None):
     today = date.today()
+    saved_count = 0
     async with async_playwright() as pw:
         browser = await pw.chromium.launch(headless=True)
 
@@ -143,7 +144,8 @@ async def scrape_urls(urls, stdout=None):
                     hjemreise_dato=hjemreise_dato,
                     reiselengde=reiselengde
                 )
-
+                saved_count += 1
+            
             count = await sync_to_async(VingData.objects.count)()
             if stdout:
                 stdout.write(f"Totalt antall rader i DB: {count}")
@@ -151,11 +153,11 @@ async def scrape_urls(urls, stdout=None):
             await page.close()
 
         await browser.close()
-
+    return saved_count
 
 def scrape_single_url(url):
     clean_url = normalize_ving_url(url)
-    asyncio.run(scrape_urls([clean_url]))
+    return asyncio.run(scrape_urls([clean_url]))
 
 
 class Command(BaseCommand):

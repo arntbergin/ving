@@ -9,6 +9,7 @@ from django.urls import reverse
 from .models import VingData, PrisAbonnement, VingURL, PersonligURL
 from .forms import PrisAbonnementForm
 from main.management.commands.hent_ving_data import scrape_single_url, normalize_ving_url
+from main.management.commands.preview_ving_url import preview_single_url
 
 
 
@@ -176,8 +177,14 @@ def test_ving_url(request):
         return JsonResponse({"ok": False, "error": "Ingen URL oppgitt."})
 
     try:
-        # Bruk den synkrone wrapperen du har laget
-        scrape_single_url(url)
-        return JsonResponse({"ok": True, "message": "Scraping fullført"})
+        result = preview_single_url(url)[0]
+        if result["count"] == 0:
+            return JsonResponse({"ok": False, "message": "Ingen hotellkort funnet"})
+        else:
+            return JsonResponse({
+                "ok": True,
+                "message": f"Fant {result['count']} hoteller",
+                "hoteller": result["hoteller"]
+            })
     except Exception as e:
         return JsonResponse({"ok": False, "error": str(e)})

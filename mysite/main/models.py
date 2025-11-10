@@ -19,7 +19,7 @@ class VingData(models.Model):
     url = models.URLField(max_length=500) 
     avreise_dato = models.DateField()  # midlertidig tillat null
     hjemreise_dato = models.DateField(null=True, blank=True)
-    reiselengde = models.IntegerField()
+    reiselengde = models.IntegerField(null=True, blank=True)
     dato_skrapt = models.DateField(auto_now_add=True)
 
     def __str__(self):
