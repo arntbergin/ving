@@ -147,6 +147,7 @@
   </div>
 </nav>
 
+{% if user.is_authenticated %}
 <div class="mb-3"></div>
     <div class="d-flex justify-content-center gap-3 mb-3">
         <a href="{% url 'ving_aktiv' %}" class="btn btn-secondary btn-lg">
@@ -165,7 +166,7 @@
             Se alle historiske priser
         </a>
     </div>
-
+{% endif %}
 <!-- Sideinnhold -->
 <main class="container mt-4">
   {% block content %}{% endblock %}
