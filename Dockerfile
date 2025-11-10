@@ -10,7 +10,7 @@ COPY pyproject.toml uv.lock ./
 # Installer dependencies + gunicorn
 RUN --mount=type=cache,target=/root/.cache/uv \
     uv sync --frozen --no-dev && \
-    uv pip install gunicorn
+    uv pip install gunicorn playwright
 
 # Bekreft at gunicorn finnes
 RUN gunicorn --version
@@ -25,9 +25,20 @@ WORKDIR /app
 ENV PATH="/app/.venv/bin:${PATH}"
 ENV PYTHONPATH=/app
 
+# Installer systempakker som Playwright/Chromium trenger
+RUN apt-get update && apt-get install -y \
+    curl gnupg libnss3 libatk1.0-0 libatk-bridge2.0-0 libcups2 libxcomposite1 \
+    libxrandr2 libxss1 libasound2 libxdamage1 libxext6 libxfixes3 libx11-xcb1 \
+    libxcb1 libx11-6 libxrender1 libdbus-glib-1-2 libgtk-3-0 libdrm2 libgbm1 \
+    libxshmfence1 && \
+    rm -rf /var/lib/apt/lists/*
+
 # Kopier både kode og venv eksplisitt
 COPY --from=builder /app /app
 COPY --from=builder /app/.venv /app/.venv
+
+# Last ned Chromium-binærene
+RUN playwright install chromium --with-deps --force
 
 EXPOSE 8000
 
