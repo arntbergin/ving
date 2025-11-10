@@ -2,8 +2,11 @@
 from .models import PrisAbonnement, VingData, VingURL
 from django.core.mail import send_mail
 from decouple import config
-from .models import VingURL, PersonligURL
-
+from .models import VingURL, PersonligURL, VingData
+import asyncio
+from datetime import date, datetime
+from playwright.async_api import async_playwright
+from asgiref.sync import sync_to_async
 
 def hent_urls_for_scraping():
     felles = list(VingURL.objects.filter(aktiv=True).values_list('url', flat=True))

@@ -2,12 +2,14 @@ from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib import messages
 from django.db.models.functions import Lower
 from .utils import sjekk_abonnementer
-from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
+from django.http import HttpRequest, HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.urls import reverse
 from .models import VingData, PrisAbonnement, VingURL, PersonligURL
 from .forms import PrisAbonnementForm
+from main.management.commands.hent_ving_data import scrape_single_url, normalize_ving_url
+
 
 
 @staff_member_required
@@ -25,39 +27,14 @@ def ving_aktiv(request):
     kategori = request.GET.get('k')
     valgt_id = request.GET.get('s')
 
-    # Nullstill kategori hvis spesifikt søk er valgt
     if valgt_id:
         kategori = None
 
-    # Lag identifikator med prefiks
-    felles_sok = [(f"ving_{sok.pk}", sok, False) for sok in VingURL.objects.filter(aktiv=True).order_by(Lower('navn'))]
-    personlige_sok = [(f"personlig_{sok.pk}", sok, True) for sok in PersonligURL.objects.filter(bruker=request.user).order_by(Lower('navn'))]
+    felles_sok = [(f"ving_{sok.pk}", sok, False) 
+                  for sok in VingURL.objects.filter(aktiv=True).order_by(Lower('navn'))]
+    personlige_sok = [(f"personlig_{sok.pk}", sok, True) 
+                      for sok in PersonligURL.objects.filter(bruker=request.user).order_by(Lower('navn'))]
     aktive_sok = felles_sok + personlige_sok
-
-    siste_dato = VingData.objects.order_by('-dato_skrapt').values_list('dato_skrapt', flat=True).first()
-    if not siste_dato:
-        messages.warning(request, "Ingen reiser funnet.")
-        return redirect('ving_liste')
-
-    data = VingData.objects.filter(dato_skrapt=siste_dato)
-
-# Filtrering
-    if valgt_id:
-        for sok_id, sok_obj, _ in aktive_sok:
-            if sok_id == valgt_id:
-                data = data.filter(url=sok_obj.url)
-                break
-    elif kategori == 'felles':
-        urls = [sok.url for _, sok, _ in felles_sok]
-        data = data.filter(url__in=urls)
-    elif kategori == 'personlig':
-        urls = [sok.url for _, sok, _ in personlige_sok]
-        data = data.filter(url__in=urls)
-    else:  # Alle = felles + egne personlige
-        urls = [sok.url for _, sok, _ in felles_sok + personlige_sok]
-        data = data.filter(url__in=urls)
-
-    data = data.order_by('pris')
 
     abonnementer = PrisAbonnement.objects.filter(bruker=request.user)
     aktive_nokler = set(
@@ -66,12 +43,29 @@ def ving_aktiv(request):
     )
 
     data_liste = []
-    for rad in data:
-        nokkel = (rad.destinasjon.strip().lower(), int(rad.reiselengde), rad.avreise_dato)
-        data_liste.append({
-            "obj": rad,
-            "har_abonnement": nokkel in aktive_nokler
-        })
+
+    # Bestem hvilke søk som skal vises
+    if valgt_id:
+        sokene = [sok for sok in aktive_sok if sok[0] == valgt_id]
+    elif kategori == 'felles':
+        sokene = felles_sok
+    elif kategori == 'personlig':
+        sokene = personlige_sok
+    else:
+        sokene = aktive_sok
+
+    # Hent ALLE hoteller for siste dato per søk
+    for _, sok_obj, _ in sokene:
+        qs = VingData.objects.filter(url=sok_obj.url).order_by('-dato_skrapt')
+        
+        siste_dato = qs.values_list('dato_skrapt', flat=True).first()
+        if siste_dato:
+            for rad in qs.filter(dato_skrapt=siste_dato):
+                nokkel = (rad.destinasjon.strip().lower(), int(rad.reiselengde), rad.avreise_dato)
+                data_liste.append({
+                    "obj": rad,
+                    "har_abonnement": nokkel in aktive_nokler
+                })
 
     kolonner = [
         ('avreisested', 'Avreisested'),
@@ -81,7 +75,6 @@ def ving_aktiv(request):
         ('reiselengde', 'Lengde'),
         ('dato_skrapt', 'Dato sjekket'),
     ]
-
     return render(request, 'ving_liste.html', {
         'data': data_liste,
         'current_sort': None,
@@ -91,6 +84,7 @@ def ving_aktiv(request):
         'valgt_id': valgt_id,
         'kategori': kategori,
     })
+
 
 
 @login_required
@@ -128,7 +122,6 @@ def ving_historikk(request):
 @login_required
 def nytt_abonnement(request):
     if request.method == 'POST':
-        print("POST-data mottatt:", request.POST)  # Debug i terminalen
 
         form = PrisAbonnementForm(request.POST)
         if form.is_valid():
@@ -161,14 +154,12 @@ def personlig_sok(request):
         navn = request.POST.get('navn')
         url = request.POST.get('url')
         if navn and url:
-            PersonligURL.objects.create(bruker=request.user, navn=navn, url=url)
-            return redirect('personlig_sok')
+            clean_url = normalize_ving_url(url)
+            PersonligURL.objects.create(bruker=request.user, navn=navn, url=clean_url)
+            scrape_single_url(clean_url)
 
     mine_urler = PersonligURL.objects.filter(bruker=request.user)
-    context = {
-        'mine_urler': mine_urler,
-    }
-    return render(request, 'personlig_sok.html', context)
+    return render(request, 'personlig_sok.html', {'mine_urler': mine_urler})
 
 
 @login_required
@@ -176,3 +167,17 @@ def slett_personlig_url(request, url_id):
     url = get_object_or_404(PersonligURL, id=url_id, bruker=request.user)
     url.delete()
     return HttpResponseRedirect(reverse('personlig_sok'))
+
+
+@login_required
+def test_ving_url(request):
+    url = request.GET.get("url")
+    if not url:
+        return JsonResponse({"ok": False, "error": "Ingen URL oppgitt."})
+
+    try:
+        # Bruk den synkrone wrapperen du har laget
+        scrape_single_url(url)
+        return JsonResponse({"ok": True, "message": "Scraping fullført"})
+    except Exception as e:
+        return JsonResponse({"ok": False, "error": str(e)})

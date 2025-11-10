@@ -12,5 +12,6 @@ urlpatterns = [
     path('ving/aktiv/', views.ving_aktiv, name='ving_aktiv'),
     path('personlig_sok/', views.personlig_sok, name='personlig_sok'),
     path('personlig_sok/slett/<int:url_id>/', views.slett_personlig_url, name='slett_personlig_url'),   
+    path("test-ving-url/", views.test_ving_url, name="test_ving_url"),
 
 ]

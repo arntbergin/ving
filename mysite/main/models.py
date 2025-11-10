@@ -16,8 +16,9 @@ class VingData(models.Model):
     avreisested = models.CharField(max_length=500)
     destinasjon = models.CharField(max_length=500)
     pris = models.IntegerField()
-    url = models.URLField(max_length=500)
+    url = models.URLField(max_length=500) 
     avreise_dato = models.DateField()  # midlertidig tillat null
+    hjemreise_dato = models.DateField(null=True, blank=True)
     reiselengde = models.IntegerField()
     dato_skrapt = models.DateField(auto_now_add=True)
 

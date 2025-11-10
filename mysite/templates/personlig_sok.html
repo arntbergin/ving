@@ -1,25 +1,8 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <div class="d-flex justify-content-center gap-3">
-        <a href="{% url 'ving_aktiv' %}" class="btn btn-secondary btn-lg">
-            Se pris av reisene
-        </a>
 
-        <a href="{% url 'mine_abonnement' %}" class="btn btn-secondary btn-lg">
-            Mine abonnement
-        </a>
-        
-        <a href="{% url 'personlig_sok' %}" class="btn btn-secondary btn-lg">
-            Personlig søk
-        </a>
-
-        <a href="{% url 'ving_historikk' %}" class="btn btn-secondary btn-lg">
-            Se alle historiske priser
-        </a>
-    </div>
-</div>
-<div class="container mt-4">
+<div class="mb-3 søk-boks"> 
 <h2 class="mb-3">
     Legg til personlig søk
     <a href="https://www.ving.no/bestill-reise?CategoryId=2&QueryAreaID=0&QueryCtryID=4328&QueryDepDate=20260428&QueryDepID=12672&QueryDur=8&QueryResID=4345&QueryRoomAges=%7C42&QueryUnits=1&experiments=test%3Ab%2Cuniversalhotelcard%3Aold%2Cnamecollectionpopup%3Aold%2Ccharterflowhotelcard%3Aabovefold&firstDisplayed=-1&nrOfHotels=10&selectedTransport=flight%7CCgJWThIkMjljNzMyZDItMTAzYi00MDc1LWJiOTctYjVkYjk2OWZjYmVi" 
@@ -27,14 +10,14 @@
         Eksempel
     </a>
 </h2>
+
 <form method="post" class="mb-4">
     {% csrf_token %}
-    <div class="mb-3">
         <input type="text" name="navn" class="form-control" placeholder="Navn på søket" required>
-    </div>
-    <div class="mb-3">
-        <input type="url" name="url" class="form-control" placeholder="Lim inn URL her" required>
-    </div>
+        <input type="url" name="url" id="url-input" class="form-control" placeholder="Lim inn URL her" required>
+        <div class="mb-3"></div>
+        <button type="button" class="btn btn-info" id="test-knapp">Test URL</button>
+        <span id="test-resultat" class="ms-2 small"></span>
     <button type="submit" class="btn btn-secondary">Lagre</button>
 </form>
 
@@ -57,6 +40,38 @@
 {% else %}
     <div class="alert alert-info mt-3">Ingen URL-er lagret ennå.</div>
 {% endif %}
-
 </div>
+
+<script>
+document.getElementById("test-knapp").addEventListener("click", () => {
+    const url = document.getElementById("url-input").value;
+    const resultat = document.getElementById("test-resultat");
+
+    if (!url) {
+        resultat.textContent = "❌ Du må fylle inn en URL";
+        resultat.className = "text-danger small";
+        return;
+    }
+
+    resultat.textContent = "🔄 Tester...";
+    resultat.className = "text-muted small";
+
+    fetch(`/test-ving-url/?url=${encodeURIComponent(url)}`)
+      .then(res => res.json())
+      .then(data => {
+        console.log("Response:", data); //sjekk respons
+        if (data.ok) {
+          resultat.textContent = `✅ Test ok`;
+          resultat.className = "text-success small";
+        } else {
+          resultat.textContent = `❌ ${data.error}`;
+          resultat.className = "text-danger small";
+        }
+      })
+      .catch(() => {
+        resultat.textContent = "❌ Feil ved testing";
+        resultat.className = "text-danger small";
+      });
+});
+</script>
 {% endblock %}
