@@ -1,4 +1,5 @@
 import asyncio
+import logging
 import re
 from datetime import datetime, date, timedelta
 from django.core.management.base import BaseCommand
@@ -7,6 +8,8 @@ from asgiref.sync import sync_to_async
 
 from main.models import VingData
 from main.utils import hent_urls_for_scraping
+
+logger = logging.getLogger(__name__)
 
 AVREISESTED_MAP = {
     "12672": "Trondheim",
@@ -62,6 +65,7 @@ async def scrape_urls(urls, stdout=None):
                     if stdout:
                         stdout.write(f"⚠ Ugyldig datoformat i URL: {params['QueryDepDate']}")
 
+            # QueryRetDate har høyest prioritet
             if "QueryRetDate" in params and params["QueryRetDate"]:
                 try:
                     hjemreise_dato = datetime.strptime(params["QueryRetDate"], "%Y%m%d").date()
@@ -70,11 +74,14 @@ async def scrape_urls(urls, stdout=None):
                 except ValueError:
                     if stdout:
                         stdout.write(f"⚠ Ugyldig datoformat i URL: {params['QueryRetDate']}")
+            # Ellers bruk QueryDur
             elif "QueryDur" in params and params["QueryDur"]:
                 try:
-                    reiselengde = int(params["QueryDur"])
-                    if avreise_dato and reiselengde > 0:
-                        hjemreise_dato = avreise_dato + timedelta(days=reiselengde)
+                    dur = int(params["QueryDur"])
+                    if avreise_dato and dur > 0:
+                        # Ving "8 dager" = 7 netter → retur = avreise + (dur - 1)
+                        hjemreise_dato = avreise_dato + timedelta(days=dur - 1)
+                        reiselengde = dur - 1
                 except ValueError:
                     if stdout:
                         stdout.write(f"⚠ Ugyldig reiselengde i URL: {params['QueryDur']}")

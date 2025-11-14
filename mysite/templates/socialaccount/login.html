@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="d-flex align-items-center justify-content-center vh-100">
+  <div class="card shadow" style="max-width:400px; width:90%; background-color: rgba(255,255,255,0.85); border:none;">
+    <div class="card-body p-4">
+      <h2 class="text-center mb-4">Logg inn med Google</h2>
+      <p class="text-center">Du er i ferd med å logge inn med Google. Klikk på knappen under for å fortsette.</p>
+      <form method="post">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger w-100">Fortsett</button>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

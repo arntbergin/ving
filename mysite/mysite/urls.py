@@ -25,8 +25,11 @@ urlpatterns = [
     # Hovedsiden 
     path('', home, name='home'),
 
-    # Konto‐ruter
+    # Konto‐views
     path('accounts/', include('accounts.urls')),
+
+    # Allauth-views (må ligge under accounts/)
+    path('accounts/', include('allauth.urls')),
 
     # Ving-data
     path('', include('main.urls')), 

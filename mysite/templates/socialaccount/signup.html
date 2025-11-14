@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+<div class="d-flex align-items-center justify-content-center vh-100">
+  <div class="card shadow" style="max-width:400px; width:90%; background-color: rgba(255,255,255,0.85); border:none;">
+    <div class="card-body p-4">
+      <h2 class="text-center mb-4">Fullfør registrering</h2>
+      <p class="text-center">Vi fant Google‑kontoen din. Fyll inn eventuelle manglende detaljer for å opprette en konto hos oss.</p>
+      <form method="post">
+        {% csrf_token %}
+        {{ form|crispy }}
+        <button type="submit" class="btn btn-primary w-100 mt-3">Fullfør</button>
+      </form>
+      <div class="mt-3 text-center">
+        Allerede registrert? <a href="{% url 'account_login' %}">Logg inn</a>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

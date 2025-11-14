@@ -1,6 +1,9 @@
 from datetime import datetime, timedelta
 from django.core.management.base import BaseCommand
 from main.models import VingData
+import logging
+
+logger = logging.getLogger(__name__)
 
 def parse_url_params(url: str) -> dict:
     parts = url.split("?", 1)
