@@ -10,7 +10,9 @@ from .models import VingData, PrisAbonnement, VingURL, PersonligURL
 from .forms import PrisAbonnementForm
 from main.management.commands.hent_ving_data import scrape_single_url, normalize_ving_url
 from main.management.commands.preview_ving_url import preview_single_url
+import logging
 
+logger = logging.getLogger(__name__)
 
 
 @staff_member_required
@@ -130,7 +132,7 @@ def nytt_abonnement(request):
             abo.bruker = request.user
             abo.save()
             print("✅ Abonnement lagret:", abo)
-            return redirect('mine_abonnement')
+            return redirect(request.META.get('HTTP_REFERER', 'mine_abonnement'))
         else:
             print("❌ Skjemaet er ugyldig:", form.errors)  # Debug i terminalen
     else:
