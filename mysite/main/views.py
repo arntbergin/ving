@@ -131,10 +131,10 @@ def nytt_abonnement(request):
             abo = form.save(commit=False)
             abo.bruker = request.user
             abo.save()
-            print("✅ Abonnement lagret:", abo)
+            logger.info("✅ Abonnement lagret: %s", abo)
             return redirect(request.META.get('HTTP_REFERER', 'mine_abonnement'))
         else:
-            print("❌ Skjemaet er ugyldig:", form.errors)  # Debug i terminalen
+            logger.warning("❌ Skjemaet er ugyldig: %s", form.errors)
     else:
         form = PrisAbonnementForm()
 
