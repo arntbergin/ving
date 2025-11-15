@@ -226,7 +226,7 @@ LOGGING = {
         "django.server": {
             "handlers": ["console"],
             "level": "INFO",
-            "propagate": False,
+            "propagate": True,
         },
         "django.db.backends": {
             "handlers": ["console"],
