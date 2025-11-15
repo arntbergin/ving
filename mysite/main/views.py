@@ -151,6 +151,19 @@ def slett_abonnement(request, abo_id):
     abo.delete()
     return redirect('mine_abonnement')
 
+#@login_required
+#def personlig_sok(request):
+#    if request.method == 'POST':
+#        navn = request.POST.get('navn')
+#        url = request.POST.get('url')
+#        if navn and url:
+#            clean_url = normalize_ving_url(url)
+#            PersonligURL.objects.create(bruker=request.user, navn=navn, url=clean_url)
+#            scrape_single_url(clean_url)
+#
+#    mine_urler = PersonligURL.objects.filter(bruker=request.user)
+#    return render(request, 'personlig_sok.html', {'mine_urler': mine_urler})
+
 @login_required
 def personlig_sok(request):
     if request.method == 'POST':
@@ -158,8 +171,25 @@ def personlig_sok(request):
         url = request.POST.get('url')
         if navn and url:
             clean_url = normalize_ving_url(url)
-            PersonligURL.objects.create(bruker=request.user, navn=navn, url=clean_url)
-            scrape_single_url(clean_url)
+
+            try:
+                result = preview_single_url(clean_url)[0]
+                if result["count"] == 0:
+                    logger.warning("❌ Ingen hotellkort funnet for URL: %s", clean_url)
+                    messages.error(request, "❌ URL er ugyldig – ingen hotellkort funnet")
+                else:
+                    # Test OK → lagre
+                    PersonligURL.objects.create(
+                        bruker=request.user,
+                        navn=navn,
+                        url=clean_url
+                    )
+                    scrape_single_url(clean_url)
+                    logger.info("✅ Personlig søk lagret: %s (%s)", navn, clean_url)
+                    messages.success(request, f"✅ Fant {result['count']} hoteller – søket er lagret")
+            except Exception as e:
+                logger.error("❌ Feil ved testing av URL %s: %s", clean_url, e)
+                messages.error(request, f"❌ Feil ved testing av URL: {e}")
 
     mine_urler = PersonligURL.objects.filter(bruker=request.user)
     return render(request, 'personlig_sok.html', {'mine_urler': mine_urler})
