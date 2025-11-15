@@ -29,8 +29,9 @@ ENV PYTHONPATH=/app
 COPY --from=builder /app /app
 COPY --from=builder /app/.venv /app/.venv
 
+RUN playwright install chromium --with-deps --force
+
 EXPOSE 8000
 
 # Start Gunicorn med riktig WSGI-app med logging
-#CMD ["gunicorn", "--chdir", "/app/mysite", "mysite.wsgi:application", "--bind", "0.0.0.0:8000", "--workers", "3", "--access-logfile", "-", "--error-logfile", "-", "--log-level", "info"]
 CMD ["gunicorn", "--chdir", "/app/mysite", "mysite.wsgi:application", "--bind", "0.0.0.0:8000", "--workers", "3", "--log-config", "/app/logging.conf"]
