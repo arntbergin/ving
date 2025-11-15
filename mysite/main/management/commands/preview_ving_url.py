@@ -1,7 +1,5 @@
 import asyncio
-import re
 import logging
-from datetime import datetime, timedelta
 from playwright.async_api import async_playwright
 from main.management.commands.hent_ving_data import normalize_ving_url
 logger = logging.getLogger(__name__)
