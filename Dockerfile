@@ -31,7 +31,6 @@ COPY --from=builder /app/.venv /app/.venv
 
 EXPOSE 8000
 
-# Start Gunicorn med riktig WSGI-app
-#CMD ["gunicorn", "--chdir", "/app/mysite", "mysite.wsgi:application", "--bind", "0.0.0.0:8000", "--workers", "3"]
-# Test med logging
-CMD ["gunicorn", "--chdir", "/app/mysite", "mysite.wsgi:application", "--bind", "0.0.0.0:8000", "--workers", "3", "--access-logfile", "-", "--error-logfile", "-", "--log-level", "info"]
+# Start Gunicorn med riktig WSGI-app med logging
+#CMD ["gunicorn", "--chdir", "/app/mysite", "mysite.wsgi:application", "--bind", "0.0.0.0:8000", "--workers", "3", "--access-logfile", "-", "--error-logfile", "-", "--log-level", "info"]
+CMD ["gunicorn", "--chdir", "/app/mysite", "mysite.wsgi:application", "--bind", "0.0.0.0:8000", "--workers", "3", "--log-config", "/app/logging.conf"]
