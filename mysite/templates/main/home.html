@@ -8,23 +8,5 @@
     <h1 class="mb-3">Velkommen {{ user.username }}</h1>
     <h5 class="mb-5">Denne siden er laget for å kunne overvåke prisen på utvalgte vingreiser, overvåke egne reiser og motta epost-varsel dersom det er prisfall på reisen man abonnerer på<br><br>Prisen sjekkes hver dag klokken 20:00</h5>
 </ul>
-    <div class="d-flex justify-content-center gap-3">
-        <a href="{% url 'ving_aktiv' %}" class="btn btn-secondary btn-lg">
-            Se pris av reisene
-        </a>
-
-
-        <a href="{% url 'mine_abonnement' %}" class="btn btn-secondary btn-lg">
-            Mine abonnement
-        </a>
-
-        <a href="{% url 'personlig_sok' %}" class="btn btn-secondary btn-lg">
-            Personlig søk
-        </a>
-
-        <a href="{% url 'ving_historikk' %}" class="btn btn-secondary btn-lg">
-            Se alle historiske priser
-        </a>
-    </div>
 </div>
 {% endblock %}
